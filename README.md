@@ -1,6 +1,6 @@
 
 # ZEER
-<img src="https://raw.githubusercontent.com/ZEERDEER/ZEER/main/ZEER.png" alt="avatar" width="100" height="100">
+<img src="https://raw.githubusercontent.com/ZEERDEER/zeerdeer.github.io/main/ZEER.png" alt="avatar" width="100" height="100">
 
 ## About Me
 

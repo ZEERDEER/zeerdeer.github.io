@@ -20,4 +20,4 @@ Github [ZEERDEER](https://github.com/ZEERDEER)
 
 Email <a href="mailto:zeerdeer@gmail.com">zeerdeer@gmail.com</a>
 
-Telegram [@ZEERDEER](https://t.me/orange_ai)
+Telegram [@ZEER](https://t.me/ZEER)

@@ -1,7 +1,3 @@
-<div align="center"> <img src="https://profile-counter.glitch.me/ZEERDEER/count.svg" /> </div>
-
-![ZEER's GitHub stats](https://github-readme-stats.vercel.app/api?username=ZEERDEER&show_icons=true&count_private=true&theme=vue)  
-
 # ZEER
 
 <img src="https://raw.githubusercontent.com/ZEERDEER/zeerdeer.github.io/main/ZEER.png" alt="avatar" width="100" height="100">

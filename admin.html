@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏管理后台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: url('https://images.unsplash.com/photo-1722073625278-297cbe7df903?auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            perspective: 1500px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(245, 243, 240, 0.8);
+            padding: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(0) rotateY(0);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform;
+        }
+
+        /* 移除hover效果，将由JavaScript控制 */
+        .container:hover {
+            box-shadow: 20px 20px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            transform-style: preserve-3d;
+            transform: translateZ(20px);
+        }
+
+        .logo {
+            color: #666;
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+
+        .home-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .home-link:hover {
+            color: #9c7c5a;
+            transform: translateZ(10px);
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: #333;
+            transform: translateZ(30px);
+        }
+
+        .game-list {
+            margin-bottom: 30px;
+            transform: translateZ(15px);
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .game-item:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: perspective(1000px) translateZ(5px) rotateX(1deg) rotateY(-2deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .game-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .game-name {
+            flex-grow: 1;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #9c7c5a;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #d9534f;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: perspective(1000px) translateZ(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .add-game-form {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            transform-style: preserve-3d;
+            transform: translateZ(20px);
+            transition: all 0.3s ease;
+        }
+
+        .add-game-form:hover {
+            transform: perspective(1000px) translateZ(25px) rotateX(1deg) rotateY(-2deg);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(200, 200, 200, 0.7);
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #9c7c5a;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 2px rgba(156, 124, 90, 0.2);
+        }
+
+        .btn-submit {
+            background: #3a3a3a;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #4a4a4a;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .message-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.4);
+            color: #155724;
+        }
+
+        .message-error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.4);
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">zeer</div>
+            <div style="display: flex; gap: 20px;">
+                <a href="index.html" class="home-link">返回主页</a>
+                <a href="#" class="home-link" onclick="logout()">退出登录</a>
+            </div>
+        </div>
+
+        <h1 class="title">最近游玩管理</h1>
+
+        <div id="message" class="message"></div>
+
+        <div class="game-list" id="gameList">
+            <!-- 游戏列表将通过JavaScript动态加载 -->
+        </div>
+
+        <div class="add-game-form">
+            <h2 class="form-title">添加/编辑游戏</h2>
+            <form id="gameForm">
+                <input type="hidden" id="gameId">
+                <div class="form-group">
+                    <label for="gameName">游戏名称</label>
+                    <input type="text" id="gameName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="gameIcon">图标URL</label>
+                    <input type="text" id="gameIcon" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-submit">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 退出登录
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        // 检查登录状态
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            const authToken = sessionStorage.getItem('authToken');
+            
+            if (!isLoggedIn || !authToken) {
+                window.location.href = 'login.html';
+                return;
+            }
+        }
+
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+        });
+
+        // 3D倾斜效果 - 鼠标跟踪
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            
+            // 鼠标移动事件监听
+            document.addEventListener('mousemove', function(e) {
+                if (!container) return;
+                
+                // 获取容器的位置和尺寸
+                const rect = container.getBoundingClientRect();
+                
+                // 计算鼠标相对于容器中心的位置（-1到1之间）
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const mouseX = e.clientX - centerX;
+                const mouseY = e.clientY - centerY;
+                
+                // 计算旋转角度（最大±5度）
+                const rotateY = mouseX / (rect.width / 2) * -5;
+                const rotateX = mouseY / (rect.height / 2) * 5;
+                
+                // 应用变换
+                container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+            });
+            
+            // 鼠标离开页面时重置变换
+            document.addEventListener('mouseleave', function() {
+                if (!container) return;
+                container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+        
+        // 游戏数据
+        let games = [];
+
+        // DOM元素
+        const gameList = document.getElementById('gameList');
+        const gameForm = document.getElementById('gameForm');
+        const gameIdInput = document.getElementById('gameId');
+        const gameNameInput = document.getElementById('gameName');
+        const gameIconInput = document.getElementById('gameIcon');
+        const messageDiv = document.getElementById('message');
+
+        // 显示消息
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message message-${type}`;
+            messageDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 获取游戏列表
+        async function fetchGames() {
+            const token = sessionStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/.netlify/functions/games', {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (response.ok) {
+                    games = await response.json();
+                    renderGames();
+                    // 同步到localStorage以便主页显示
+                    localStorage.setItem('recentGames', JSON.stringify(games));
+                } else {
+                    showMessage('获取游戏列表失败', 'error');
+                }
+            } catch (error) {
+                console.error('获取游戏列表错误:', error);
+                showMessage('获取游戏列表时发生错误', 'error');
+            }
+        }
+
+        // 渲染游戏列表
+        function renderGames() {
+            gameList.innerHTML = '';
+            
+            games.forEach(game => {
+                const gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerHTML = `
+                    <img src="${game.icon}" alt="${game.name}" class="game-icon">
+                    <div class="game-name">${game.name}</div>
+                    <div class="game-actions">
+                        <button class="btn btn-edit" data-id="${game.id}">编辑</button>
+                        <button class="btn btn-delete" data-id="${game.id}">删除</button>
+                    </div>
+                `;
+                gameList.appendChild(gameItem);
+            });
+
+            // 添加编辑和删除事件监听器
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    editGame(id);
+                });
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    deleteGame(id);
+                });
+            });
+        }
+
+        // 编辑游戏
+        function editGame(id) {
+            const game = games.find(g => g.id === id);
+            if (game) {
+                gameIdInput.value = game.id;
+                gameNameInput.value = game.name;
+                gameIconInput.value = game.icon;
+            }
+        }
+
+        // 删除游戏
+        async function deleteGame(id) {
+            if (confirm('确定要删除这个游戏吗？')) {
+                const token = sessionStorage.getItem('authToken');
+                if (!token) return;
+                
+                try {
+                    const response = await fetch('/.netlify/functions/games', {
+                        method: 'DELETE',
+                        headers: { 'Authorization': token },
+                        body: JSON.stringify({ id })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        games = data.games;
+                        renderGames();
+                        // 同步到localStorage以便主页显示
+                        localStorage.setItem('recentGames', JSON.stringify(games));
+                        showMessage('游戏已删除', 'success');
+                    } else {
+                        showMessage('删除游戏失败', 'error');
+                    }
+                } catch (error) {
+                    console.error('删除游戏错误:', error);
+                    showMessage('删除游戏时发生错误', 'error');
+                }
+            }
+        }
+
+        // 表单提交处理
+        gameForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const token = sessionStorage.getItem('authToken');
+            if (!token) return;
+            
+            const id = gameIdInput.value ? parseInt(gameIdInput.value) : null;
+            const name = gameNameInput.value;
+            const icon = gameIconInput.value;
+            
+            try {
+                const response = await fetch('/.netlify/functions/games', {
+                    method: 'POST',
+                    headers: { 'Authorization': token },
+                    body: JSON.stringify({ id, name, icon })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    games = data.games;
+                    renderGames();
+                    // 同步到localStorage以便主页显示
+                    localStorage.setItem('recentGames', JSON.stringify(games));
+                    showMessage(id ? '游戏已更新' : '游戏已添加', 'success');
+                    
+                    // 重置表单
+                    gameForm.reset();
+                    gameIdInput.value = '';
+                } else {
+                    showMessage('保存游戏失败', 'error');
+                }
+            } catch (error) {
+                console.error('保存游戏错误:', error);
+                showMessage('保存游戏时发生错误', 'error');
+            }
+        });
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+            fetchGames();
+        });
+    </script>
+</body>
+</html>

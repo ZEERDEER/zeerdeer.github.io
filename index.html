@@ -1044,14 +1044,6 @@
                 </div>
 
                 <form id="loginForm">
-                    <div class="input-group">
-                        <div class="icon-container"><img src="https://img.122200.xyz/GhostOfTsushima.ico" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;"></div>
-                        <div style="width: 100%; padding: 18px 18px 18px 70px; font-size: 1.1rem; color: #000; font-weight: bold;">Ghost Of Tsushima Legend Mode</div>
-                    </div>
-                    <div class="input-group" style="position: relative;">
-                        <div class="icon-container"><img src="https://img.122200.xyz/RiseoftheRonin.png" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;"></div>
-                        <div style="width: 100%; padding: 18px 18px 18px 70px; font-size: 1.1rem; color: #000; font-weight: bold;">Rise of the Rōnin</div>
-                    </div>
                     <div class="submit-container">
                         <p class="responsible-text">ʟᴏᴠᴇ ɪs ᴏʀᴀɴɢᴇ, ɪs ᴡᴀʀᴍ, ɪs ʜᴇʀᴇ.</p>
                         <button type="submit" class="submit-btn">🕹️</button>
@@ -1113,6 +1105,7 @@
         </div>
     </div>
 
+    <script src="js/recent-games.js"></script>
     <script>
         // Load Spotify tracks
         async function loadSpotifyTracks() {
@@ -1203,17 +1196,8 @@
         // Login form submission
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            
-            if (userData[email] && userData[email] === password) {
-                showNotification('Welcome back to Elegant Stay. Your room is being prepared.');
-                // Clear form
-                loginForm.reset();
-            } else {
-                showNotification('Incorrect email or password. Please try again.');
-            }
+            // 直接跳转到登录页面
+            window.location.href = 'login.html';
         });
         // Twitter login - removed click event to allow direct navigation to Twitter profile
         // The link now directly navigates to https://x.com/ZEERDEER
@@ -1225,30 +1209,29 @@
                 panels.forEach(panel => {
                     if (!panel) return;
                     
-                    // Get element boundaries
+                    // 获取元素边界
                     const rect = panel.getBoundingClientRect();
                     
-                    // Calculate mouse's relative position in the element
-                    const x = e.clientX - rect.left; // Distance between mouse and element's left boundary
-                    const y = e.clientY - rect.top; // Distance between mouse and element's top boundary
+                    // 计算鼠标在元素内的相对位置
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
                     
-                    // Convert relative position to [-1, 1] range, with center point at (0,0)
-                    const xPercent = (x / rect.width) * 2 - 1;
-                    const yPercent = (y / rect.height) * 2 - 1;
-                    
-                    // Determine if mouse is on the element
+                    // 判断鼠标是否在元素内
                     const isInElement = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
                     
                     if (isInElement) {
-                        // Implement 3D tilt effect, mouse position determines tilt angle
-                        // Use small tilt angles to avoid exaggerated effect
-                        const rotateX = yPercent * -5; // Inverse, when mouse is at top, card tilts upward
-                        const rotateY = xPercent * 5; // When mouse is on left, card tilts left
+                        // 将相对位置转换为[-1, 1]范围
+                        const xPercent = (x / rect.width) * 2 - 1;
+                        const yPercent = (y / rect.height) * 2 - 1;
                         
-                        // Apply transform
+                        // 计算倾斜角度
+                        const rotateX = yPercent * -5;
+                        const rotateY = xPercent * 5;
+                        
+                        // 应用变换
                         panel.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
                     } else {
-                        // When mouse is not on element, restore original state
+                        // 鼠标不在元素内时恢复原状
                         panel.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                     }
                 });

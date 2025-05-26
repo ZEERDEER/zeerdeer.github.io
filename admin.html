@@ -63,43 +63,37 @@
         }
 
         .icon-btn {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.7);
+            background: #3a3a3a;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
-            color: #666;
-            font-size: 1.2rem;
-<<<<<<< HEAD
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-=======
->>>>>>> 2ac1850c2803618b1598d7d41806fad20eec442e
         }
 
         .icon-btn:hover {
-            background-color: rgba(255, 255, 255, 0.9);
+            background: #4a4a4a;
             transform: translateZ(10px) scale(1.1);
-<<<<<<< HEAD
             box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
 
         .icon-btn svg {
             width: 20px;
             height: 20px;
-            fill: #666;
+            fill: white;
             transition: fill 0.3s ease;
         }
 
-        .icon-btn:hover svg {
-            fill: #9c7c5a;
-=======
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
->>>>>>> 2ac1850c2803618b1598d7d41806fad20eec442e
+        .icon-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.1s ease;
         }
 
         .title {
@@ -224,23 +218,33 @@
         }
 
         .btn-submit {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             background: #3a3a3a;
             color: white;
-            padding: 12px 25px;
-            font-size: 1rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
             margin-top: 10px;
             position: relative;
             overflow: hidden;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
         .btn-submit:hover {
             background: #4a4a4a;
-            transform: translateZ(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateZ(10px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-submit:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.1s ease;
         }
 
         .btn-submit.loading::after {
@@ -285,7 +289,6 @@
         <div class="header">
             <div class="logo">zeer</div>
             <div class="nav-buttons">
-<<<<<<< HEAD
                 <button id="homeBtn" class="icon-btn" title="返回主页">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M12 2L2 12h3v9h14v-9h3L12 2zm-2 16v-7h4v7h-4z"/>
@@ -296,10 +299,6 @@
                         <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
                 </button>
-=======
-                <button id="homeBtn" class="icon-btn" title="返回主页">🏠</button>
-                <button id="logoutBtn" class="icon-btn" title="退出登录">🚪</button>
->>>>>>> 2ac1850c2803618b1598d7d41806fad20eec442e
             </div>
         </div>
 
@@ -323,7 +322,9 @@
                     <label for="gameIcon">图标URL</label>
                     <input type="text" id="gameIcon" class="form-control" required>
                 </div>
-                <button type="submit" class="btn-submit" id="saveBtn">保存</button>
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn-submit" id="saveBtn">💾</button>
+                </div>
             </form>
         </div>
     </div>
@@ -424,8 +425,14 @@
             });
             
             // 点击事件时暂时禁用3D效果
-            document.addEventListener('mousedown', function() {
+            document.addEventListener('mousedown', function(e) {
                 if (!container) return;
+                
+                // 检查点击的是否是按钮
+                if (e.target.closest('button') || e.target.closest('a')) {
+                    return; // 如果是按钮，不改变容器的变换
+                }
+                
                 // 保存当前变换
                 const currentTransform = container.style.transform;
                 // 重置变换

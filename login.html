@@ -230,10 +230,10 @@
                 const data = await response.json();
                 if (data.success) {
                     sessionStorage.setItem('authToken', data.token);
-                    sessionStorage.setItem('adminLoggedIn', 'true');
-                    window.location.href = 'admin.html';
-                } else {
-                    errorMessage.textContent = '账号或密码错误！';
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                errorMessage.textContent = '账号或密码错误！';
                     errorMessage.style.display = 'block';
                     setTimeout(() => {
                         errorMessage.style.display = 'none';

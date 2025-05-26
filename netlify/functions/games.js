@@ -13,18 +13,18 @@ let games = [
 ];
 
 exports.handler = async function(event, context) {
-  // 验证令牌
-  const token = event.headers.authorization;
-  if (!token) {
-    return { statusCode: 401, body: JSON.stringify({ message: "Unauthorized" }) };
-  }
-  
-  // GET请求 - 获取游戏列表
+  // GET请求 - 获取游戏列表 (公开访问)
   if (event.httpMethod === "GET") {
     return {
       statusCode: 200,
       body: JSON.stringify(games)
     };
+  }
+  
+  // 对于非GET请求，验证令牌
+  const token = event.headers.authorization;
+  if (!token) {
+    return { statusCode: 401, body: JSON.stringify({ message: "Unauthorized" }) };
   }
   
   // POST请求 - 添加或更新游戏

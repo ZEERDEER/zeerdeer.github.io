@@ -1,5 +1,29 @@
-// 从localStorage获取最近游玩的游戏数据
-function loadRecentGames() {
+// 从Netlify Functions获取最近游玩的游戏数据
+async function loadRecentGames() {
+    // 获取游戏容器
+    const recentPlayContainer = document.querySelector('.recent-play');
+    
+    try {
+        // 尝试从API获取游戏数据
+        const response = await fetch('/.netlify/functions/games');
+        
+        // 如果API请求成功
+        if (response.ok) {
+            const games = await response.json();
+            renderGames(games, recentPlayContainer);
+        } else {
+            // 如果API请求失败，回退到localStorage
+            fallbackToLocalStorage(recentPlayContainer);
+        }
+    } catch (error) {
+        console.error('获取游戏数据错误:', error);
+        // 出错时回退到localStorage
+        fallbackToLocalStorage(recentPlayContainer);
+    }
+}
+
+// 从localStorage获取数据的回退函数
+function fallbackToLocalStorage(container) {
     // 获取存储的游戏数据，如果没有则使用默认数据
     const games = JSON.parse(localStorage.getItem('recentGames')) || [
         {
@@ -13,14 +37,16 @@ function loadRecentGames() {
             icon: "https://img.122200.xyz/RiseoftheRonin.png"
         }
     ];
-
-    // 获取最近游玩区域的容器
-    const recentPlayContainer = document.querySelector('.recent-play');
     
+    renderGames(games, container);
+}
+
+// 渲染游戏列表
+function renderGames(games, container) {
     // 清空现有内容，只保留标题
-    const title = recentPlayContainer.querySelector('h3');
-    recentPlayContainer.innerHTML = '';
-    recentPlayContainer.appendChild(title);
+    const title = container.querySelector('h3');
+    container.innerHTML = '';
+    container.appendChild(title);
     
     // 创建游戏列表
     games.forEach(game => {
@@ -48,7 +74,7 @@ function loadRecentGames() {
         gameItem.appendChild(nameContainer);
         
         // 将游戏项添加到容器中
-        recentPlayContainer.appendChild(gameItem);
+        container.appendChild(gameItem);
     });
 }
 

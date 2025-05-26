@@ -62,11 +62,16 @@
             text-decoration: none;
             font-size: 1.1rem;
             transition: color 0.3s ease, transform 0.3s ease;
+            padding: 8px 15px;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 10px;
         }
 
         .home-link:hover {
             color: #9c7c5a;
             transform: translateZ(10px);
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
         .title {
@@ -196,10 +201,28 @@
             padding: 12px 25px;
             font-size: 1rem;
             margin-top: 10px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-submit:hover {
             background: #4a4a4a;
+        }
+
+        .btn-submit.loading::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .message {
@@ -227,9 +250,9 @@
     <div class="container">
         <div class="header">
             <div class="logo">zeer</div>
-            <div style="display: flex; gap: 20px;">
-                <a href="index.html" class="home-link">返回主页</a>
-                <a href="#" class="home-link" onclick="logout()">退出登录</a>
+            <div style="display: flex; gap: 10px;">
+                <a href="index.html" class="home-link" id="homeLink">返回主页</a>
+                <a href="#" class="home-link" id="logoutLink">退出登录</a>
             </div>
         </div>
 
@@ -262,6 +285,7 @@
         // 退出登录
         function logout() {
             sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('authToken');
             window.location.href = 'index.html';
         }
 
@@ -279,37 +303,91 @@
         // 页面加载时检查登录状态
         document.addEventListener('DOMContentLoaded', function() {
             checkLogin();
+            
+            // 添加导航链接的事件监听器
+            document.getElementById('logoutLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+            
+            document.getElementById('homeLink').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
         });
 
         // 3D倾斜效果 - 鼠标跟踪
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.querySelector('.container');
+            let isMouseMoving = false;
+            let mouseTimer;
             
             // 鼠标移动事件监听
             document.addEventListener('mousemove', function(e) {
                 if (!container) return;
                 
+                // 设置鼠标移动标志
+                isMouseMoving = true;
+                clearTimeout(mouseTimer);
+                
                 // 获取容器的位置和尺寸
                 const rect = container.getBoundingClientRect();
                 
-                // 计算鼠标相对于容器中心的位置（-1到1之间）
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                const mouseX = e.clientX - centerX;
-                const mouseY = e.clientY - centerY;
+                // 检查鼠标是否在容器内
+                const isInside = 
+                    e.clientX >= rect.left && 
+                    e.clientX <= rect.right && 
+                    e.clientY >= rect.top && 
+                    e.clientY <= rect.bottom;
                 
-                // 计算旋转角度（最大±5度）
-                const rotateY = mouseX / (rect.width / 2) * -5;
-                const rotateX = mouseY / (rect.height / 2) * 5;
+                // 只有当鼠标在容器内时才应用3D效果
+                if (isInside) {
+                    // 计算鼠标相对于容器中心的位置（-1到1之间）
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const mouseX = e.clientX - centerX;
+                    const mouseY = e.clientY - centerY;
+                    
+                    // 计算旋转角度（最大±3度，降低了角度）
+                    const rotateY = mouseX / (rect.width / 2) * -3;
+                    const rotateX = mouseY / (rect.height / 2) * 3;
+                    
+                    // 应用变换
+                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                } else {
+                    // 鼠标不在容器内，重置变换
+                    container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                }
                 
-                // 应用变换
-                container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+                // 设置定时器，如果鼠标停止移动，重置变换
+                mouseTimer = setTimeout(() => {
+                    if (isMouseMoving) {
+                        container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                        isMouseMoving = false;
+                    }
+                }, 1500);
             });
             
             // 鼠标离开页面时重置变换
             document.addEventListener('mouseleave', function() {
                 if (!container) return;
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                isMouseMoving = false;
+            });
+            
+            // 点击事件时暂时禁用3D效果
+            document.addEventListener('mousedown', function() {
+                if (!container) return;
+                // 保存当前变换
+                const currentTransform = container.style.transform;
+                // 重置变换
+                container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                
+                // 100ms后恢复变换
+                setTimeout(() => {
+                    if (isMouseMoving) {
+                        container.style.transform = currentTransform;
+                    }
+                }, 100);
             });
         });
         
@@ -447,6 +525,11 @@
             const name = gameNameInput.value;
             const icon = gameIconInput.value;
             
+            // 添加保存按钮的加载状态
+            const submitButton = this.querySelector('.btn-submit');
+            submitButton.classList.add('loading');
+            submitButton.disabled = true;
+            
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     method: 'POST',
@@ -471,6 +554,10 @@
             } catch (error) {
                 console.error('保存游戏错误:', error);
                 showMessage('保存游戏时发生错误', 'error');
+            } finally {
+                // 移除加载状态
+                submitButton.classList.remove('loading');
+                submitButton.disabled = false;
             }
         });
 

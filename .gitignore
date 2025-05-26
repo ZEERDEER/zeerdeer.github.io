@@ -1,0 +1,8 @@
+# Local Netlify folder
+.netlify
+
+# 环境变量文件
+.env
+.env.local
+.env.development
+.env.production

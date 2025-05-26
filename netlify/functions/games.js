@@ -1,5 +1,5 @@
 // 初始游戏数据
-let games = [
+const defaultGames = [
   {
     id: 1,
     name: "Ghost Of Tsushima Legend Mode",
@@ -12,19 +12,41 @@ let games = [
   }
 ];
 
+// 使用Netlify环境变量获取KV存储访问权限
+const { getStore } = require('@netlify/functions');
+
 exports.handler = async function(event, context) {
+  // 初始化KV存储
+  const store = getStore('GAMES_KV');
+  
+  // 尝试从KV存储获取游戏数据，如果没有则使用默认数据
+  let games = await store.get('games_data');
+  if (!games) {
+    games = defaultGames;
+    // 首次使用时初始化KV存储
+    await store.set('games_data', games);
+  }
+  
   // GET请求 - 获取游戏列表 (公开访问)
   if (event.httpMethod === "GET") {
     return {
       statusCode: 200,
-      body: JSON.stringify(games)
+      body: JSON.stringify(games),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      }
     };
   }
   
   // 对于非GET请求，验证令牌
   const token = event.headers.authorization;
   if (!token) {
-    return { statusCode: 401, body: JSON.stringify({ message: "Unauthorized" }) };
+    return { 
+      statusCode: 401, 
+      body: JSON.stringify({ message: "Unauthorized" }),
+      headers: { 'Content-Type': 'application/json' }
+    };
   }
   
   // POST请求 - 添加或更新游戏
@@ -44,12 +66,20 @@ exports.handler = async function(event, context) {
         games.push(newGame);
       }
       
+      // 保存更新后的游戏数据到KV存储
+      await store.set('games_data', games);
+      
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, games })
+        body: JSON.stringify({ success: true, games }),
+        headers: { 'Content-Type': 'application/json' }
       };
     } catch (error) {
-      return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+      return { 
+        statusCode: 500, 
+        body: JSON.stringify({ error: error.message }),
+        headers: { 'Content-Type': 'application/json' }
+      };
     }
   }
   
@@ -59,14 +89,26 @@ exports.handler = async function(event, context) {
       const { id } = JSON.parse(event.body);
       games = games.filter(game => game.id !== parseInt(id));
       
+      // 保存更新后的游戏数据到KV存储
+      await store.set('games_data', games);
+      
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, games })
+        body: JSON.stringify({ success: true, games }),
+        headers: { 'Content-Type': 'application/json' }
       };
     } catch (error) {
-      return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+      return { 
+        statusCode: 500, 
+        body: JSON.stringify({ error: error.message }),
+        headers: { 'Content-Type': 'application/json' }
+      };
     }
   }
   
-  return { statusCode: 405, body: "Method Not Allowed" };
+  return { 
+    statusCode: 405, 
+    body: JSON.stringify({ message: "Method Not Allowed" }),
+    headers: { 'Content-Type': 'application/json' }
+  };
 }; 

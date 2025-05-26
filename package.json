@@ -1,0 +1,15 @@
+{
+  "name": "zeerdeer.github.io",
+  "version": "1.0.0",
+  "description": "<img src=\"https://raw.githubusercontent.com/ZEERDEER/zeerdeer.github.io/main/ZEER.png\" alt=\"avatar\" width=\"100\" height=\"100\">",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/functions": "^3.1.9"
+  }
+}

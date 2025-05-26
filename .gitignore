@@ -6,3 +6,6 @@
 .env.local
 .env.development
 .env.production
+
+# 依赖包
+node_modules/

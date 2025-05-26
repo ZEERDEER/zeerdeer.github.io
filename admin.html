@@ -57,21 +57,30 @@
             font-weight: 400;
         }
 
-        .home-link {
-            color: #666;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: color 0.3s ease, transform 0.3s ease;
-            padding: 8px 15px;
-            display: inline-block;
-            cursor: pointer;
-            border-radius: 10px;
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
         }
 
-        .home-link:hover {
-            color: #9c7c5a;
-            transform: translateZ(10px);
-            background-color: rgba(255, 255, 255, 0.3);
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .icon-btn:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateZ(10px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .title {
@@ -203,10 +212,16 @@
             margin-top: 10px;
             position: relative;
             overflow: hidden;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .btn-submit:hover {
             background: #4a4a4a;
+            transform: translateZ(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .btn-submit.loading::after {
@@ -250,9 +265,9 @@
     <div class="container">
         <div class="header">
             <div class="logo">zeer</div>
-            <div style="display: flex; gap: 10px;">
-                <a href="index.html" class="home-link" id="homeLink">返回主页</a>
-                <a href="#" class="home-link" id="logoutLink">退出登录</a>
+            <div class="nav-buttons">
+                <button id="homeBtn" class="icon-btn" title="返回主页">🏠</button>
+                <button id="logoutBtn" class="icon-btn" title="退出登录">🚪</button>
             </div>
         </div>
 
@@ -276,7 +291,7 @@
                     <label for="gameIcon">图标URL</label>
                     <input type="text" id="gameIcon" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-submit">保存</button>
+                <button type="submit" class="btn-submit" id="saveBtn">保存</button>
             </form>
         </div>
     </div>
@@ -304,15 +319,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkLogin();
             
-            // 添加导航链接的事件监听器
-            document.getElementById('logoutLink').addEventListener('click', function(e) {
-                e.preventDefault();
+            // 添加导航按钮的事件监听器
+            document.getElementById('logoutBtn').addEventListener('click', function() {
                 logout();
             });
             
-            document.getElementById('homeLink').addEventListener('click', function() {
+            document.getElementById('homeBtn').addEventListener('click', function() {
                 window.location.href = 'index.html';
             });
+            
+            // 初始化游戏列表
+            fetchGames();
         });
 
         // 3D倾斜效果 - 鼠标跟踪
@@ -401,6 +418,7 @@
         const gameNameInput = document.getElementById('gameName');
         const gameIconInput = document.getElementById('gameIcon');
         const messageDiv = document.getElementById('message');
+        const saveBtn = document.getElementById('saveBtn');
 
         // 显示消息
         function showMessage(text, type) {
@@ -526,14 +544,16 @@
             const icon = gameIconInput.value;
             
             // 添加保存按钮的加载状态
-            const submitButton = this.querySelector('.btn-submit');
-            submitButton.classList.add('loading');
-            submitButton.disabled = true;
+            saveBtn.classList.add('loading');
+            saveBtn.disabled = true;
             
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     method: 'POST',
-                    headers: { 'Authorization': token },
+                    headers: { 
+                        'Authorization': token,
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ id, name, icon })
                 });
                 
@@ -556,15 +576,9 @@
                 showMessage('保存游戏时发生错误', 'error');
             } finally {
                 // 移除加载状态
-                submitButton.classList.remove('loading');
-                submitButton.disabled = false;
+                saveBtn.classList.remove('loading');
+                saveBtn.disabled = false;
             }
-        });
-
-        // 初始化页面
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLogin();
-            fetchGames();
         });
     </script>
 </body>

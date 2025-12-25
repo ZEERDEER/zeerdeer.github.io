@@ -62,8 +62,8 @@ exports.handler = async function (event, context) {
 
   // 2. 连接云端存储
   try {
-    // 显式指定存储桶名称
-    store = getStore('GAMES_KV');
+    // 显式指定存储桶名称 (Object Syntax)
+    store = getStore({ name: 'GAMES_KV', consistency: 'strong' });
     console.log('DEBUG: [Blobs] 正在尝试读取 games_data...');
 
     const kvGames = await store.get('games_data', { type: 'json' });

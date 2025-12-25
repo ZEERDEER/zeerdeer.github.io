@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,7 @@
             -webkit-backdrop-filter: blur(10px);
             background-color: rgba(245, 243, 240, 0.8);
             padding: 40px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             transform-style: preserve-3d;
             transform: perspective(1000px) rotateX(0) rotateY(0);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -40,8 +41,9 @@
 
         /* 移除hover效果，将由JavaScript控制 */
         .container:hover {
-            box-shadow: 20px 20px 30px rgba(0,0,0,0.2);
+            box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.2);
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -74,13 +76,13 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .icon-btn:hover {
             background: #4a4a4a;
             transform: translateZ(10px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         }
 
         .icon-btn svg {
@@ -92,7 +94,7 @@
 
         .icon-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.1s ease;
         }
 
@@ -122,7 +124,7 @@
         .game-item:hover {
             background: rgba(255, 255, 255, 0.7);
             transform: perspective(1000px) translateZ(5px) rotateX(1deg) rotateY(-2deg);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
 
         .game-icon {
@@ -166,7 +168,7 @@
 
         .btn:hover {
             transform: perspective(1000px) translateZ(10px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .add-game-form {
@@ -181,8 +183,9 @@
 
         .add-game-form:hover {
             transform: perspective(1000px) translateZ(25px) rotateX(1deg) rotateY(-2deg);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
+
         .form-title {
             font-size: 1.5rem;
             margin-bottom: 20px;
@@ -238,12 +241,12 @@
         .btn-submit:hover {
             background: #4a4a4a;
             transform: translateZ(10px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .btn-submit:active {
             transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.1s ease;
         }
 
@@ -259,8 +262,13 @@
         }
 
         @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
         }
 
         .message {
@@ -284,6 +292,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -291,12 +300,13 @@
             <div class="nav-buttons">
                 <button id="homeBtn" class="icon-btn" title="返回主页">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M12 2L2 12h3v9h14v-9h3L12 2zm-2 16v-7h4v7h-4z"/>
+                        <path d="M12 2L2 12h3v9h14v-9h3L12 2zm-2 16v-7h4v7h-4z" />
                     </svg>
                 </button>
                 <button id="logoutBtn" class="icon-btn" title="退出登录">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                        <path
+                            d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
                     </svg>
                 </button>
             </div>
@@ -320,7 +330,11 @@
                 </div>
                 <div class="form-group">
                     <label for="gameIcon">图标URL</label>
-                    <input type="text" id="gameIcon" class="form-control" required>
+                    <input type="text" id="gameIcon" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="steamId">Steam AppID (可选)</label>
+                    <input type="text" id="steamId" class="form-control" placeholder="例如: 400">
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
                     <button type="submit" class="btn-submit" id="saveBtn">💾</button>
@@ -332,8 +346,8 @@
     <script>
         // 退出登录
         function logout() {
-            sessionStorage.removeItem('adminLoggedIn');
-            sessionStorage.removeItem('authToken');
+            sessionStorage.clear(); // 清除所有会话数据
+            // 如果有 localStorage 相关数据也可以选择性清除，但建议保留最近游玩的缓存以供主页使用
             window.location.href = 'index.html';
         }
 
@@ -341,7 +355,7 @@
         function checkLogin() {
             const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
             const authToken = sessionStorage.getItem('authToken');
-            
+
             if (!isLoggedIn || !authToken) {
                 window.location.href = 'login.html';
                 return;
@@ -349,46 +363,46 @@
         }
 
         // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             checkLogin();
-            
+
             // 添加导航按钮的事件监听器
-            document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('logoutBtn').addEventListener('click', function () {
                 logout();
             });
-            
-            document.getElementById('homeBtn').addEventListener('click', function() {
+
+            document.getElementById('homeBtn').addEventListener('click', function () {
                 window.location.href = 'index.html';
             });
-            
+
             // 初始化游戏列表
             fetchGames();
         });
 
         // 3D倾斜效果 - 鼠标跟踪
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const container = document.querySelector('.container');
             let isMouseMoving = false;
             let mouseTimer;
-            
+
             // 鼠标移动事件监听
-            document.addEventListener('mousemove', function(e) {
+            document.addEventListener('mousemove', function (e) {
                 if (!container) return;
-                
+
                 // 设置鼠标移动标志
                 isMouseMoving = true;
                 clearTimeout(mouseTimer);
-                
+
                 // 获取容器的位置和尺寸
                 const rect = container.getBoundingClientRect();
-                
+
                 // 检查鼠标是否在容器内
-                const isInside = 
-                    e.clientX >= rect.left && 
-                    e.clientX <= rect.right && 
-                    e.clientY >= rect.top && 
+                const isInside =
+                    e.clientX >= rect.left &&
+                    e.clientX <= rect.right &&
+                    e.clientY >= rect.top &&
                     e.clientY <= rect.bottom;
-                
+
                 // 只有当鼠标在容器内时才应用3D效果
                 if (isInside) {
                     // 计算鼠标相对于容器中心的位置（-1到1之间）
@@ -396,18 +410,18 @@
                     const centerY = rect.top + rect.height / 2;
                     const mouseX = e.clientX - centerX;
                     const mouseY = e.clientY - centerY;
-                    
+
                     // 计算旋转角度（最大±3度，降低了角度）
                     const rotateY = mouseX / (rect.width / 2) * -3;
                     const rotateX = mouseY / (rect.height / 2) * 3;
-                    
+
                     // 应用变换
                     container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
                 } else {
                     // 鼠标不在容器内，重置变换
                     container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 }
-                
+
                 // 设置定时器，如果鼠标停止移动，重置变换
                 mouseTimer = setTimeout(() => {
                     if (isMouseMoving) {
@@ -416,28 +430,28 @@
                     }
                 }, 1500);
             });
-            
+
             // 鼠标离开页面时重置变换
-            document.addEventListener('mouseleave', function() {
+            document.addEventListener('mouseleave', function () {
                 if (!container) return;
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 isMouseMoving = false;
             });
-            
+
             // 点击事件时暂时禁用3D效果
-            document.addEventListener('mousedown', function(e) {
+            document.addEventListener('mousedown', function (e) {
                 if (!container) return;
-                
+
                 // 检查点击的是否是按钮
                 if (e.target.closest('button') || e.target.closest('a')) {
                     return; // 如果是按钮，不改变容器的变换
                 }
-                
+
                 // 保存当前变换
                 const currentTransform = container.style.transform;
                 // 重置变换
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-                
+
                 // 100ms后恢复变换
                 setTimeout(() => {
                     if (isMouseMoving) {
@@ -446,7 +460,7 @@
                 }, 100);
             });
         });
-        
+
         // 游戏数据
         let games = [];
 
@@ -456,6 +470,7 @@
         const gameIdInput = document.getElementById('gameId');
         const gameNameInput = document.getElementById('gameName');
         const gameIconInput = document.getElementById('gameIcon');
+        const steamIdInput = document.getElementById('steamId');
         const messageDiv = document.getElementById('message');
         const saveBtn = document.getElementById('saveBtn');
 
@@ -464,7 +479,7 @@
             messageDiv.textContent = text;
             messageDiv.className = `message message-${type}`;
             messageDiv.style.display = 'block';
-            
+
             setTimeout(() => {
                 messageDiv.style.display = 'none';
             }, 3000);
@@ -477,12 +492,12 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     headers: { 'Authorization': token }
                 });
-                
+
                 if (response.ok) {
                     games = await response.json();
                     renderGames();
@@ -500,7 +515,7 @@
         // 渲染游戏列表
         function renderGames() {
             gameList.innerHTML = '';
-            
+
             games.forEach(game => {
                 const gameItem = document.createElement('div');
                 gameItem.className = 'game-item';
@@ -517,14 +532,14 @@
 
             // 添加编辑和删除事件监听器
             document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const id = parseInt(this.getAttribute('data-id'));
                     editGame(id);
                 });
             });
 
             document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const id = parseInt(this.getAttribute('data-id'));
                     deleteGame(id);
                 });
@@ -538,6 +553,7 @@
                 gameIdInput.value = game.id;
                 gameNameInput.value = game.name;
                 gameIconInput.value = game.icon;
+                steamIdInput.value = game.steamId || '';
             }
         }
 
@@ -546,14 +562,14 @@
             if (confirm('确定要删除这个游戏吗？')) {
                 const token = sessionStorage.getItem('authToken');
                 if (!token) return;
-                
+
                 try {
                     const response = await fetch('/.netlify/functions/games', {
                         method: 'DELETE',
                         headers: { 'Authorization': token },
                         body: JSON.stringify({ id })
                     });
-                    
+
                     if (response.ok) {
                         const data = await response.json();
                         games = data.games;
@@ -572,30 +588,36 @@
         }
 
         // 表单提交处理
-        gameForm.addEventListener('submit', async function(e) {
+        gameForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const token = sessionStorage.getItem('authToken');
             if (!token) return;
-            
+
             const id = gameIdInput.value ? parseInt(gameIdInput.value) : null;
-            const name = gameNameInput.value;
-            const icon = gameIconInput.value;
-            
+            const name = gameNameInput.value.trim();
+            const icon = gameIconInput.value.trim();
+            const steamId = steamIdInput.value.trim();
+
+            if (!steamId && (!name || !icon)) {
+                showMessage('如果是手动添加，名称和图标不能为空', 'error');
+                return;
+            }
+
             // 添加保存按钮的加载状态
             saveBtn.classList.add('loading');
             saveBtn.disabled = true;
-            
+
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Authorization': token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ id, name, icon })
+                    body: JSON.stringify({ id, name, icon, steamId })
                 });
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     games = data.games;
@@ -603,7 +625,7 @@
                     // 同步到localStorage以便主页显示
                     localStorage.setItem('recentGames', JSON.stringify(games));
                     showMessage(id ? '游戏已更新' : '游戏已添加', 'success');
-                    
+
                     // 重置表单
                     gameForm.reset();
                     gameIdInput.value = '';
@@ -621,4 +643,5 @@
         });
     </script>
 </body>
+
 </html>

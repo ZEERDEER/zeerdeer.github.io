@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 exports.handler = async function(event, context) {
     if (event.httpMethod !== "POST") {
       return { statusCode: 405, body: "Method Not Allowed" };
@@ -6,13 +8,17 @@ exports.handler = async function(event, context) {
     try {
       const { username, password } = JSON.parse(event.body);
       
-      // 使用环境变量获取凭据
       const validUsername = process.env.ADMIN_USERNAME;
       const validPassword = process.env.ADMIN_PASSWORD;
+      const apiSecret = process.env.API_SECRET || validPassword;
       
-      // 验证凭据
       if (username === validUsername && password === validPassword) {
-        const token = Buffer.from(Date.now().toString()).toString('base64');
+        const timestamp = Date.now().toString();
+        const signature = crypto.createHmac('sha256', apiSecret)
+                               .update(timestamp)
+                               .digest('base64');
+        const token = `${timestamp}.${signature}`;
+        
         return {
           statusCode: 200,
           body: JSON.stringify({ success: true, token })

@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 // 初始游戏数据
 const defaultGames = [
   {
@@ -18,21 +20,54 @@ let memoryGames = [...defaultGames];
 // 使用Netlify环境变量获取KV存储访问权限
 const { getStore } = require('@netlify/functions');
 
-exports.handler = async function(event, context) {
+// 辅助函数：验证令牌
+function isValidToken(token) {
+  if (!token) return false;
+
+  const parts = token.split('.');
+  if (parts.length !== 2) return false;
+
+  const [timestamp, signature] = parts;
+  const apiSecret = process.env.API_SECRET || process.env.ADMIN_PASSWORD;
+
+  if (!apiSecret) return false;
+
+  // 验证签名
+  const expectedSignature = crypto.createHmac('sha256', apiSecret)
+    .update(timestamp)
+    .digest('base64');
+
+  if (signature !== expectedSignature) return false;
+
+  // 验证时间戳（例如 24 小时内有效）
+  const tokenTime = parseInt(timestamp);
+  const now = Date.now();
+  const twentyFourHours = 24 * 60 * 60 * 1000;
+
+  if (now - tokenTime > twentyFourHours) return false;
+
+  return true;
+}
+
+exports.handler = async function (event, context) {
   let games = [...memoryGames];
   let useKV = true;
-  
+
+  // CORS 设置 - 在生产环境中应更严格
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*', // 如果可能，应改为具体的域名
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS'
+  };
+
   try {
-    // 尝试初始化KV存储
     const store = getStore('GAMES_KV');
-    
-    // 尝试从KV存储获取游戏数据
     const kvGames = await store.get('games_data');
     if (kvGames) {
       games = kvGames;
-      memoryGames = [...games]; // 更新内存中的备份
+      memoryGames = [...games];
     } else {
-      // 首次使用时初始化KV存储
       try {
         await store.set('games_data', games);
       } catch (error) {
@@ -44,54 +79,91 @@ exports.handler = async function(event, context) {
     console.log('KV存储不可用:', error);
     useKV = false;
   }
-  
+
   // GET请求 - 获取游戏列表 (公开访问)
   if (event.httpMethod === "GET") {
     return {
       statusCode: 200,
       body: JSON.stringify(games),
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'Access-Control-Allow-Origin': '*' // 允许跨域访问
+        ...headers,
+        'Cache-Control': 'no-cache'
       }
     };
   }
-  
-  // 对于非GET请求，验证令牌
+
+  // 对于非GET请求，处理OPTIONS
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
+  // 验证令牌
   const token = event.headers.authorization;
-  if (!token) {
-    return { 
-      statusCode: 401, 
-      body: JSON.stringify({ message: "Unauthorized" }),
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+  if (!isValidToken(token)) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({ message: "Unauthorized or token expired" }),
+      headers
     };
   }
-  
+
   // POST请求 - 添加或更新游戏
   if (event.httpMethod === "POST") {
     try {
-      const newGame = JSON.parse(event.body);
-      
-      if (newGame.id) {
-        // 更新现有游戏
-        const index = games.findIndex(g => g.id === parseInt(newGame.id));
+      const gameData = JSON.parse(event.body);
+      let { name, icon, steamId, id } = gameData;
+
+      // 如果提供了 steamId，从 Steam 获取信息
+      if (steamId) {
+        try {
+          // 在 Netlify Functions 中使用原生 fetch
+          const steamResponse = await fetch(`https://store.steampowered.com/api/appdetails?appids=${steamId}`);
+          const steamData = await steamResponse.json();
+
+          if (steamData[steamId] && steamData[steamId].success) {
+            const data = steamData[steamId].data;
+            if (!name) name = data.name;
+            if (!icon) icon = data.header_image;
+          }
+        } catch (error) {
+          console.error('Steam API 访问失败:', error);
+        }
+      }
+
+      // 输入验证
+      if (!name || !icon) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: "游戏名称和图标是必填的（或者提供有效的 Steam AppID）" }),
+          headers
+        };
+      }
+
+      // 简单的 XSS 防护
+      const sanitizedName = name.replace(/<[^>]*>?/gm, '');
+      const sanitizedIcon = icon.replace(/<[^>]*>?/gm, '');
+
+      if (id) {
+        const index = games.findIndex(g => g.id === parseInt(id));
         if (index !== -1) {
-          games[index] = { ...newGame, id: parseInt(newGame.id) };
+          games[index] = { id: parseInt(id), name: sanitizedName, icon: sanitizedIcon, steamId: steamId || null };
         }
       } else {
-        // 添加新游戏
-        newGame.id = Date.now();
+        const newGame = {
+          id: Date.now(),
+          name: sanitizedName,
+          icon: sanitizedIcon,
+          steamId: steamId || null
+        };
         games.push(newGame);
       }
-      
-      // 更新内存中的备份
+
       memoryGames = [...games];
-      
-      // 尝试保存到KV存储
+
       if (useKV) {
         try {
           const store = getStore('GAMES_KV');
@@ -100,37 +172,36 @@ exports.handler = async function(event, context) {
           console.log('KV存储更新失败:', error);
         }
       }
-      
+
       return {
         statusCode: 200,
         body: JSON.stringify({ success: true, games }),
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+        headers
       };
     } catch (error) {
-      return { 
-        statusCode: 500, 
+      return {
+        statusCode: 500,
         body: JSON.stringify({ error: error.message }),
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+        headers
       };
     }
   }
-  
+
   // DELETE请求 - 删除游戏
   if (event.httpMethod === "DELETE") {
     try {
       const { id } = JSON.parse(event.body);
+      if (!id) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: "Game ID is required" }),
+          headers
+        };
+      }
+
       games = games.filter(game => game.id !== parseInt(id));
-      
-      // 更新内存中的备份
       memoryGames = [...games];
-      
-      // 尝试保存到KV存储
+
       if (useKV) {
         try {
           const store = getStore('GAMES_KV');
@@ -139,46 +210,24 @@ exports.handler = async function(event, context) {
           console.log('KV存储更新失败:', error);
         }
       }
-      
+
       return {
         statusCode: 200,
         body: JSON.stringify({ success: true, games }),
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+        headers
       };
     } catch (error) {
-      return { 
-        statusCode: 500, 
+      return {
+        statusCode: 500,
         body: JSON.stringify({ error: error.message }),
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+        headers
       };
     }
   }
-  
-  // OPTIONS请求 - 处理CORS预检请求
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS'
-      },
-      body: ''
-    };
-  }
-  
-  return { 
-    statusCode: 405, 
+
+  return {
+    statusCode: 405,
     body: JSON.stringify({ message: "Method Not Allowed" }),
-    headers: { 
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    }
+    headers
   };
 }; 

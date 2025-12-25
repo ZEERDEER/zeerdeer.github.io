@@ -325,16 +325,9 @@
             <form id="gameForm">
                 <input type="hidden" id="gameId">
                 <div class="form-group">
-                    <label for="gameName">游戏名称</label>
-                    <input type="text" id="gameName" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="gameIcon">图标URL</label>
-                    <input type="text" id="gameIcon" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="steamId">Steam AppID (可选)</label>
-                    <input type="text" id="steamId" class="form-control" placeholder="例如: 400">
+                    <label for="steamId">Steam AppID</label>
+                    <input type="text" id="steamId" class="form-control" placeholder="输入游戏 AppID (例如: 400)" required>
+                    <p style="font-size: 0.8rem; color: #777; margin-top: 5px;">* 名称和图标将自动从 Steam 抓取</p>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">
                     <button type="submit" class="btn-submit" id="saveBtn">💾</button>
@@ -396,15 +389,17 @@
                 // 获取容器的位置和尺寸
                 const rect = container.getBoundingClientRect();
 
-                // 检查鼠标是否在容器内
+                // 检查鼠标是否在容器内且不在互动元素上
                 const isInside =
                     e.clientX >= rect.left &&
                     e.clientX <= rect.right &&
                     e.clientY >= rect.top &&
                     e.clientY <= rect.bottom;
 
-                // 只有当鼠标在容器内时才应用3D效果
-                if (isInside) {
+                const isOverInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('input');
+
+                // 只有当鼠标在容器内且不在按钮上时才应用3D效果
+                if (isInside && !isOverInteractive) {
                     // 计算鼠标相对于容器中心的位置（-1到1之间）
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
@@ -418,7 +413,7 @@
                     // 应用变换
                     container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
                 } else {
-                    // 鼠标不在容器内，重置变换
+                    // 鼠标不在容器内或在按钮上，重置变换
                     container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
                 }
 
@@ -468,8 +463,6 @@
         const gameList = document.getElementById('gameList');
         const gameForm = document.getElementById('gameForm');
         const gameIdInput = document.getElementById('gameId');
-        const gameNameInput = document.getElementById('gameName');
-        const gameIconInput = document.getElementById('gameIcon');
         const steamIdInput = document.getElementById('steamId');
         const messageDiv = document.getElementById('message');
         const saveBtn = document.getElementById('saveBtn');
@@ -551,8 +544,6 @@
             const game = games.find(g => g.id === id);
             if (game) {
                 gameIdInput.value = game.id;
-                gameNameInput.value = game.name;
-                gameIconInput.value = game.icon;
                 steamIdInput.value = game.steamId || '';
             }
         }
@@ -595,12 +586,10 @@
             if (!token) return;
 
             const id = gameIdInput.value ? parseInt(gameIdInput.value) : null;
-            const name = gameNameInput.value.trim();
-            const icon = gameIconInput.value.trim();
             const steamId = steamIdInput.value.trim();
 
-            if (!steamId && (!name || !icon)) {
-                showMessage('如果是手动添加，名称和图标不能为空', 'error');
+            if (!steamId) {
+                showMessage('请输入 Steam AppID', 'error');
                 return;
             }
 
@@ -615,7 +604,7 @@
                         'Authorization': token,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ id, name, icon, steamId })
+                    body: JSON.stringify({ id, steamId })
                 });
 
                 if (response.ok) {

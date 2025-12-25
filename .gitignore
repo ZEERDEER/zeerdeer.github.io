@@ -8,4 +8,5 @@
 .env.production
 
 # 依赖包
-node_modules/
+node_modules
+**/node_modules

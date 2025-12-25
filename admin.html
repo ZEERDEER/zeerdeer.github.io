@@ -437,12 +437,13 @@
         async function fetchGames() {
             const token = sessionStorage.getItem('authToken');
             try {
-                const response = await fetch('/.netlify/functions/games', {
+                const response = await fetch(`/.netlify/functions/games?t=${Date.now()}`, {
                     headers: { 'Authorization': token }
                 });
 
                 if (response.ok) {
-                    games = await response.json();
+                    const data = await response.json();
+                    games = data.games || [];
                     renderGames();
                     localStorage.setItem('recentGames', JSON.stringify(games));
                 } else {
@@ -487,7 +488,7 @@
             if (!confirm('确定要删除这个游戏吗？')) return;
             const token = sessionStorage.getItem('authToken');
             try {
-                const response = await fetch('/.netlify/functions/games', {
+                const response = await fetch(`/.netlify/functions/games`, {
                     method: 'DELETE',
                     headers: { 'Authorization': token },
                     body: JSON.stringify({ id })
@@ -495,7 +496,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    games = data.games;
+                    games = data.games || [];
                     renderGames();
                     localStorage.setItem('recentGames', JSON.stringify(games));
                     showMessage('游戏已删除', 'success');
@@ -526,7 +527,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    games = data.games;
+                    games = data.games || [];
                     renderGames();
                     localStorage.setItem('recentGames', JSON.stringify(games));
                     showMessage(id ? '游戏已更新' : '游戏已添加', 'success');

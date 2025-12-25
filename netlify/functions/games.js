@@ -3,11 +3,8 @@ const crypto = require('crypto');
 // 初始游戏数据（生产环境中保持为空，以验证持久化是否生效）
 const defaultGames = [];
 
-// 内存缓存（防止频繁读取，但主要依赖云端持久化）
-let memoryGames = [...defaultGames];
-
-// 使用 Netlify Functions V2 兼容的 Blobs 接口
-const { getStore } = require('@netlify/functions');
+// 使用 Netlify Blobs 存储服务
+const { getStore } = require('@netlify/blobs');
 
 /**
  * 验证 Token 的合法性
@@ -38,15 +35,7 @@ function isValidToken(token) {
     .digest('base64');
 
   if (signature !== expectedSignature) {
-    console.error('DEBUG: 验证失败 - 签名不匹配（可能是密码/密钥不一致）');
-    return false;
-  }
-
-  // 验证 Token 时效 (24小时)
-  const tokenTime = parseInt(timestamp);
-  const now = Date.now();
-  if (now - tokenTime > 24 * 60 * 60 * 1000) {
-    console.error('DEBUG: 验证失败 - Token 已过期');
+    console.error('DEBUG: 验证失败 - 签名不匹配');
     return false;
   }
 
@@ -54,8 +43,9 @@ function isValidToken(token) {
 }
 
 exports.handler = async function (event, context) {
-  let games = [...memoryGames];
+  let games = [];
   let store;
+  let storeStatus = "Not initialized";
 
   const headers = {
     'Content-Type': 'application/json',
@@ -64,31 +54,36 @@ exports.handler = async function (event, context) {
     'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS'
   };
 
-  // --- 1. 连接云端存储 ---
+  // 获取 Token (兼容大小写)
+  const token = event.headers.authorization || event.headers.Authorization;
+
   try {
-    // getStore() 不传参则访问站点的默认 Blobs 存储桶
     store = getStore();
-    console.log('DEBUG: 正在尝试从 Netlify Blobs 获取数据...');
+    console.log('DEBUG: 正在尝试连接 Netlify Blobs...');
 
     const kvGames = await store.get('games_data', { type: 'json' });
     if (kvGames) {
       console.log(`DEBUG: 成功载入云端数据，共 ${kvGames.length} 个项目`);
       games = kvGames;
-      memoryGames = [...games]; // 更新内存缓存
+      storeStatus = "Connected (Data found)";
     } else {
       console.log('DEBUG: 云端存储目前为空');
+      storeStatus = "Connected (Empty)";
     }
   } catch (error) {
     console.error('DEBUG: [致命错误] 无法连接 Blobs 存储:', error.message);
+    storeStatus = `Error: ${error.message}`;
   }
-
-  // --- 2. 处理请求路由 ---
 
   if (event.httpMethod === "GET") {
     return {
       statusCode: 200,
-      headers: { ...headers, 'Cache-Control': 'no-cache' },
-      body: JSON.stringify(games)
+      headers: { ...headers, 'Cache-Control': 'no-cache, no-store, must-revalidate' },
+      body: JSON.stringify({
+        games,
+        serverTime: new Date().toISOString(),
+        storeStatus
+      })
     };
   }
 
@@ -96,17 +91,13 @@ exports.handler = async function (event, context) {
     return { statusCode: 200, headers, body: '' };
   }
 
-  // --- 3. 身份验证 (POST/DELETE) ---
-  const token = event.headers.authorization;
   if (!isValidToken(token)) {
     return {
       statusCode: 401,
       headers,
-      body: JSON.stringify({ message: "无效的身份令牌或 Token 已过期" })
+      body: JSON.stringify({ message: "无效的身份令牌", storeStatus })
     };
   }
-
-  // --- 4. 修改数据逻辑 ---
 
   if (event.httpMethod === "POST") {
     try {
@@ -114,8 +105,7 @@ exports.handler = async function (event, context) {
       let finalName = name;
       let finalIcon = icon;
 
-      // 如果有 Steam ID，则优先抓取
-      if (steamId) {
+      if (steamId && (!finalName || !finalIcon)) {
         try {
           const steamRes = await fetch(`https://store.steampowered.com/api/appdetails?appids=${steamId}`);
           const steamData = await steamRes.json();
@@ -129,12 +119,8 @@ exports.handler = async function (event, context) {
         }
       }
 
-      if (!finalName || !finalIcon) {
-        return { statusCode: 400, headers, body: JSON.stringify({ message: "缺少必要数据" }) };
-      }
-
-      const cleanName = finalName.replace(/<[^>]*>?/gm, '');
-      const cleanIcon = finalIcon.replace(/<[^>]*>?/gm, '');
+      const cleanName = (finalName || "Unknown").replace(/<[^>]*>?/gm, '');
+      const cleanIcon = (finalIcon || "").replace(/<[^>]*>?/gm, '');
 
       if (id) {
         const index = games.findIndex(g => g.id === parseInt(id));
@@ -145,17 +131,14 @@ exports.handler = async function (event, context) {
         games.push({ id: Date.now(), name: cleanName, icon: cleanIcon, steamId: steamId || null });
       }
 
-      // --- 同步到云端 ---
       if (store) {
         await store.setJSON('games_data', games);
         console.log('DEBUG: 数据已成功保存到云端 Blobs');
       }
 
-      memoryGames = [...games]; // 更新缓存
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, games }) };
-
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, games, storeStatus: "Updated" }) };
     } catch (error) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: error.message, storeStatus }) };
     }
   }
 
@@ -166,13 +149,11 @@ exports.handler = async function (event, context) {
 
       if (store) {
         await store.setJSON('games_data', games);
-        console.log('DEBUG: 已在云端删除项目并同步完成');
       }
 
-      memoryGames = [...games];
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true, games }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, games, storeStatus: "Deleted" }) };
     } catch (error) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: error.message, storeStatus }) };
     }
   }
 

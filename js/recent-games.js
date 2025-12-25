@@ -1,66 +1,55 @@
 // 从Netlify Functions获取最近游玩的游戏数据
 async function loadRecentGames() {
-    // 获取游戏容器
     const recentPlayContainer = document.querySelector('.recent-play');
 
     try {
-        // 尝试从API获取游戏数据
-        const response = await fetch('/.netlify/functions/games');
+        // 使用时间戳防止浏览器缓存
+        const response = await fetch(`/.netlify/functions/games?t=${Date.now()}`);
 
-        // 如果API请求成功
         if (response.ok) {
-            const games = await response.json();
+            const data = await response.json();
+            console.log(`[GameData] Status: ${data.storeStatus}, ServerTime: ${data.serverTime}`);
+
+            // 提取游戏列表
+            const games = data.games || [];
             renderGames(games, recentPlayContainer);
         } else {
-            // 如果API请求失败，回退到localStorage
-            fallbackToLocalStorage(recentPlayContainer);
+            console.error('API 请求失败，状态码:', response.status);
+            renderGames([], recentPlayContainer);
         }
     } catch (error) {
-        console.error('获取游戏数据错误:', error);
-        // 出错时回退到localStorage
-        fallbackToLocalStorage(recentPlayContainer);
+        console.error('获取游戏数据发生网络错误:', error);
+        renderGames([], recentPlayContainer);
     }
-}
-
-// 从localStorage获取数据的回退函数
-function fallbackToLocalStorage(container) {
-    // 获取存储的游戏数据，如果没有则使用默认数据
-    const games = JSON.parse(localStorage.getItem('recentGames')) || [
-        {
-            id: 1,
-            name: "Ghost Of Tsushima Legend Mode",
-            icon: "https://img.122200.xyz/GhostOfTsushima.ico"
-        },
-        {
-            id: 2,
-            name: "Rise of the Rōnin",
-            icon: "https://img.122200.xyz/RiseoftheRonin.png"
-        }
-    ];
-
-    renderGames(games, container);
 }
 
 // 渲染游戏列表
 function renderGames(games, container) {
-    // 清空现有内容，只保留标题
     const title = container.querySelector('h3');
     container.innerHTML = '';
     container.appendChild(title);
 
-    // 创建游戏列表
+    if (!games || games.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'input-group';
+        emptyState.style.padding = '20px';
+        emptyState.style.textAlign = 'center';
+        emptyState.style.color = '#777';
+        emptyState.style.fontSize = '0.9rem';
+        emptyState.textContent = '最近暂无游玩记录';
+        container.appendChild(emptyState);
+        return;
+    }
+
     games.forEach(game => {
-        // 创建游戏项
         const gameItem = document.createElement('div');
         gameItem.className = 'input-group';
         gameItem.style.position = 'relative';
 
-        // 设置游戏图标
         const iconContainer = document.createElement('div');
         iconContainer.className = 'icon-container';
         iconContainer.innerHTML = `<img src="${game.icon}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">`;
 
-        // 设置游戏名称
         const nameContainer = document.createElement('div');
         nameContainer.style.width = '100%';
         nameContainer.style.padding = '18px 18px 18px 70px';
@@ -69,16 +58,12 @@ function renderGames(games, container) {
         nameContainer.style.fontWeight = 'bold';
         nameContainer.textContent = game.name;
 
-        // 将元素添加到游戏项中
         gameItem.appendChild(iconContainer);
         gameItem.appendChild(nameContainer);
-
-        // 将游戏项添加到容器中
         container.appendChild(gameItem);
     });
 }
 
-// 页面加载时初始化游戏列表
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     loadRecentGames();
 });

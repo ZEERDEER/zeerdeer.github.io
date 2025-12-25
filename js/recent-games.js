@@ -24,8 +24,20 @@ async function loadRecentGames() {
 
 // 从localStorage获取数据的回退函数
 function fallbackToLocalStorage(container) {
-    // 获取存储的游戏数据，如果没有则为空数组
-    const games = JSON.parse(localStorage.getItem('recentGames')) || [];
+    // 获取存储的游戏数据，如果没有则使用默认数据
+    const games = JSON.parse(localStorage.getItem('recentGames')) || [
+        {
+            id: 1,
+            name: "Ghost Of Tsushima Legend Mode",
+            icon: "https://img.122200.xyz/GhostOfTsushima.ico"
+        },
+        {
+            id: 2,
+            name: "Rise of the Rōnin",
+            icon: "https://img.122200.xyz/RiseoftheRonin.png"
+        }
+    ];
+
     renderGames(games, container);
 }
 
@@ -35,19 +47,6 @@ function renderGames(games, container) {
     const title = container.querySelector('h3');
     container.innerHTML = '';
     container.appendChild(title);
-
-    // 如果没有游戏数据，显示占位提示
-    if (!games || games.length === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'input-group';
-        emptyState.style.padding = '20px';
-        emptyState.style.textAlign = 'center';
-        emptyState.style.color = '#777';
-        emptyState.style.fontSize = '0.9rem';
-        emptyState.textContent = '最近暂无游玩记录';
-        container.appendChild(emptyState);
-        return;
-    }
 
     // 创建游戏列表
     games.forEach(game => {

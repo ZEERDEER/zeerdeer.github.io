@@ -79,12 +79,14 @@
             border: none;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             position: relative;
-            transform: translateZ(20px);
+            transform: translateZ(50px);
+            z-index: 999;
+            pointer-events: auto;
         }
 
         .icon-btn:hover {
             background: #4a4a4a;
-            transform: translateZ(40px) scale(1.1) translateY(-2px);
+            transform: translateZ(70px) scale(1.1) translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -187,12 +189,12 @@
             padding: 20px;
             margin-top: 30px;
             transform-style: preserve-3d;
-            transform: translateZ(20px);
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
         }
 
         .add-game-form:hover {
-            transform: perspective(1000px) translateZ(25px) rotateX(1deg) rotateY(-2deg);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
@@ -222,8 +224,7 @@
             font-size: 1rem;
             transition: all 0.3s ease;
             position: relative;
-            z-index: 100;
-            transform: translateZ(30px);
+            transform: translateZ(20px);
         }
 
         .form-control:focus {
@@ -243,18 +244,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            cursor: pointer !important;
             font-size: 1.2rem;
             transition: all 0.3s ease;
             margin-top: 10px;
             position: relative;
             overflow: hidden;
-            transform: translateZ(25px);
+            transform: translateZ(80px);
+            z-index: 9999;
+            pointer-events: auto;
         }
 
         .btn-submit:hover {
             background: #4a4a4a;
-            transform: translateZ(45px) scale(1.1) translateY(-2px);
+            transform: translateZ(70px) scale(1.1) translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -409,7 +412,7 @@
                     e.clientY >= rect.top &&
                     e.clientY <= rect.bottom;
 
-                // 应用倾斜效果
+                // 设置倾斜效果
                 if (isInside) {
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
@@ -425,14 +428,6 @@
                     container.style.transition = 'transform 0.4s ease';
                     container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
                 }
-
-                // 设置定时器，如果鼠标停止移动，重置变换
-                mouseTimer = setTimeout(() => {
-                    if (isMouseMoving) {
-                        container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-                        isMouseMoving = false;
-                    }
-                }, 1500);
             });
 
             // 鼠标离开页面时重置变换
@@ -442,27 +437,7 @@
                 isMouseMoving = false;
             });
 
-            // 点击事件时暂时禁用3D效果
-            document.addEventListener('mousedown', function (e) {
-                if (!container) return;
-
-                // 检查点击的是否是按钮
-                if (e.target.closest('button') || e.target.closest('a')) {
-                    return; // 如果是按钮，不改变容器的变换
-                }
-
-                // 保存当前变换
-                const currentTransform = container.style.transform;
-                // 重置变换
-                container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-
-                // 100ms后恢复变换
-                setTimeout(() => {
-                    if (isMouseMoving) {
-                        container.style.transform = currentTransform;
-                    }
-                }, 100);
-            });
+            // 点击事件下移到最底层，确保不拦截按钮
         });
 
         // 游戏数据

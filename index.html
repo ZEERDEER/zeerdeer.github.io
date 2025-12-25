@@ -1,4 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com https://avatars.githubusercontent.com https://img.122200.xyz https://gist.githubusercontent.com https://*.githubusercontent.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com https://avatars.githubusercontent.com https://img.122200.xyz https://gist.githubusercontent.com https://*.githubusercontent.com https://*.steamstatic.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zeer</title>
@@ -19,7 +24,8 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            perspective: 1500px; /* Add perspective effect to the entire page */
+            perspective: 1500px;
+            /* Add perspective effect to the entire page */
         }
 
         .container {
@@ -32,10 +38,12 @@
 
         .panels-container {
             display: flex;
-            flex-wrap: wrap; /* Allow panels to wrap */
+            flex-wrap: wrap;
+            /* Allow panels to wrap */
             gap: 15px;
             margin-bottom: 20px;
-            perspective: 1000px; /* Add perspective effect to panel container */
+            perspective: 1000px;
+            /* Add perspective effect to panel container */
         }
 
         .panel {
@@ -45,17 +53,21 @@
             overflow: hidden;
             position: relative;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transform-style: preserve-3d; /* Maintain 3D transforms */
-            transform: perspective(1000px) rotateX(0) rotateY(0); /* Initial no rotation */
-            flex: 1 1 calc(50% - 7.5px); /* Each panel takes 50% width minus gap */
-            min-width: 300px; /* Ensure panels have minimum width */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform-style: preserve-3d;
+            /* Maintain 3D transforms */
+            transform: perspective(1000px) rotateX(0) rotateY(0);
+            /* Initial no rotation */
+            flex: 1 1 calc(50% - 7.5px);
+            /* Each panel takes 50% width minus gap */
+            min-width: 300px;
+            /* Ensure panels have minimum width */
         }
 
         /* Add 3D effect to cards on hover */
         .panel:hover {
             transform: perspective(1000px) rotateX(2deg) rotateY(-5deg) scale(1.03);
-            box-shadow: 20px 20px 30px rgba(0,0,0,0.2);
+            box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.2);
         }
 
         .left-panel {
@@ -90,7 +102,8 @@
             align-items: center;
             margin-bottom: 40px;
             transform-style: preserve-3d;
-            transform: translateZ(20px); /* Make title float */
+            transform: translateZ(20px);
+            /* Make title float */
         }
 
         .logo {
@@ -98,7 +111,7 @@
             font-size: 1.4rem;
             font-weight: 400;
         }
-    
+
         .signup-link {
             color: #666;
             text-decoration: none;
@@ -108,7 +121,8 @@
 
         .signup-link:hover {
             color: #9c7c5a;
-            transform: translateZ(10px); /* Link floats more on hover */
+            transform: translateZ(10px);
+            /* Link floats more on hover */
         }
 
         .login-title {
@@ -116,11 +130,13 @@
             font-weight: 500;
             margin-bottom: 25px;
             color: #333;
-            transform: translateZ(30px); /* Make title more prominent */
+            transform: translateZ(30px);
+            /* Make title more prominent */
             display: flex;
             align-items: center;
             margin-top: 10px;
-            gap: 25px; /* 增加头像和文字之间的间距 */
+            gap: 25px;
+            /* 增加头像和文字之间的间距 */
         }
 
         .login-title img {
@@ -129,16 +145,18 @@
             border-radius: 60px;
             border: 3px solid #666;
             object-fit: cover;
-            margin-right: 0; /* 移除原有的右边距，使用 gap 来控制间距 */
+            margin-right: 0;
+            /* 移除原有的右边距，使用 gap 来控制间距 */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .login-title img:hover {
             transform: scale(1.1) translateZ(20px);
             border-color: #9c7c5a;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-.social-buttons {
+
+        .social-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -157,31 +175,36 @@
             cursor: pointer;
             width: fit-content;
             transition: all 0.3s ease;
-            transform: translateZ(20px); /* Make button float */
-            text-decoration: none; /* 去除下划线 */
+            transform: translateZ(20px);
+            /* Make button float */
+            text-decoration: none;
+            /* 去除下划线 */
         }
 
         .social-btn:hover {
             background: rgba(255, 255, 255, 0.8);
-            transform: translateZ(30px) translateY(-2px); /* Float more when hovering */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateZ(30px) translateY(-2px);
+            /* Float more when hovering */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .social-btn svg {
             margin-right: 8px;
         }
+
         .social-btn span {
-    color: #555;
-}
+            color: #555;
+        }
+
         /* 特定社交媒体按钮样式 */
         .twitter-btn:hover svg {
             fill: #1DA1F2;
         }
-        
+
         .youtube-btn:hover svg {
             fill: #FF0000;
         }
-        
+
         .steam-btn:hover svg {
             fill: #1b2838;
         }
@@ -197,13 +220,16 @@
             border-radius: 35px;
             overflow: hidden;
             transition: all 0.3s ease;
-            transform: translateZ(10px); /* Make input field slightly float */
+            transform: translateZ(10px);
+            /* Make input field slightly float */
         }
 
-        .input-group:hover, .input-group:focus-within {
+        .input-group:hover,
+        .input-group:focus-within {
             background: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transform: translateZ(20px); /* Float more on hover */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateZ(20px);
+            /* Float more on hover */
         }
 
         .input-group input {
@@ -238,8 +264,9 @@
 
         .input-group:hover .icon-container {
             background: rgba(255, 255, 255, 1);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transform: translateY(-50%) translateZ(5px); /* Let the icon float slightly */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(-50%) translateZ(5px);
+            /* Let the icon float slightly */
         }
 
         .warning-text {
@@ -248,7 +275,8 @@
             line-height: 1.5;
             margin: 25px 0;
             max-width: 90%;
-            transform: translateZ(15px); /* Make text float */
+            transform: translateZ(15px);
+            /* Make text float */
         }
 
         .warning-text a {
@@ -259,13 +287,15 @@
 
         .warning-text a:hover {
             text-decoration: underline;
-            transform: translateZ(5px); /* Links float slightly on hover */
+            transform: translateZ(5px);
+            /* Links float slightly on hover */
         }
 
         .recent-play {
             margin-bottom: 25px;
             transform-style: preserve-3d;
-            transform: translateZ(20px); /* Make title float */
+            transform: translateZ(20px);
+            /* Make title float */
         }
 
         .recent-play h3 {
@@ -281,7 +311,7 @@
             display: inline-block;
             padding-right: 12px;
         }
-        
+
         .recent-play h3::before {
             content: '';
             position: absolute;
@@ -295,12 +325,12 @@
             opacity: 0.7;
             transition: all 0.3s ease;
         }
-        
+
         .recent-play h3:hover {
             color: #9c7c5a;
             transform: translateZ(15px);
         }
-        
+
         .recent-play h3:hover::before {
             height: 100%;
             opacity: 1;
@@ -311,7 +341,8 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
-            transform: translateZ(25px); /* Make submit area float */
+            transform: translateZ(25px);
+            /* Make submit area float */
         }
 
         .responsible-text {
@@ -336,13 +367,15 @@
 
         .submit-btn:hover {
             background: #4a4a4a;
-            transform: translateZ(10px) scale(1.1); /* Button floats and enlarges on hover */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateZ(10px) scale(1.1);
+            /* Button floats and enlarges on hover */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         /* Create a dedicated container for the black card */
         .black-card-container {
-            width: calc(50% - 7.5px); /* Same width as the left card */
+            width: calc(50% - 7.5px);
+            /* Same width as the left card */
             margin-left: 0;
         }
 
@@ -354,16 +387,19 @@
             color: white;
             border-radius: 40px;
             height: 170px;
-            width: 100%; /* Width relative to parent container */
+            width: 100%;
+            /* Width relative to parent container */
             position: relative;
-            padding: 25px 40px; /* Reduce top padding */
+            padding: 25px 40px;
+            /* Reduce top padding */
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             transform-style: preserve-3d;
             transform: perspective(1000px) rotateX(0) rotateY(0);
-            overflow: hidden; /* Ensure light sweep effect doesn't exceed card boundaries */
+            overflow: hidden;
+            /* Ensure light sweep effect doesn't exceed card boundaries */
         }
-        
+
         /* Spotify section styles */
         .spotify-section {
             height: auto;
@@ -377,9 +413,9 @@
         .new-section:hover {
             background: rgba(0, 0, 0, 0.8);
             transform: perspective(1000px) rotateX(5deg) rotateY(-8deg) scale(1.05);
-            box-shadow: 20px 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.3);
         }
-        
+
         /* Spotify specific hover state */
         .spotify-section:hover {
             background: rgba(20, 20, 20, 0.9);
@@ -393,15 +429,14 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.1) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
+            background: linear-gradient(to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 100%);
             transform: rotate(45deg) translateY(-100%);
             transition: transform 0.8s ease;
-            pointer-events: none; /* Ensure it doesn't affect mouse events */
+            pointer-events: none;
+            /* Ensure it doesn't affect mouse events */
         }
 
         /* Trigger light sweep animation on hover */
@@ -411,14 +446,16 @@
 
         .new-title {
             position: absolute;
-            top: 20px; /* Closer to top */
+            top: 20px;
+            /* Closer to top */
             left: 40px;
             display: flex;
             flex-direction: column;
             transform-style: preserve-3d;
-            transform: translateZ(30px); /* Make title float */
+            transform: translateZ(30px);
+            /* Make title float */
         }
-        
+
         /* Spotify header and content styles */
         .spotify-header {
             display: flex;
@@ -427,29 +464,30 @@
             transform-style: preserve-3d;
             transform: translateZ(30px);
         }
-        
+
         .spotify-logo {
             width: 30px;
             height: 30px;
             margin-right: 15px;
         }
-        
+
         .spotify-title {
             flex: 1;
         }
-        
+
         .spotify-title h2 {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
-        
+
         .spotify-title p {
             font-size: 0.9rem;
-            color: #1DB954; /* Spotify green */
+            color: #1DB954;
+            /* Spotify green */
             font-weight: 500;
         }
-        
+
         .spotify-content {
             margin-top: 20px;
             max-height: 200px;
@@ -462,20 +500,20 @@
             transform-style: preserve-3d;
             transform: translateZ(20px);
         }
-        
+
         .spotify-content::-webkit-scrollbar {
             width: 4px;
         }
-        
+
         .spotify-content::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 2px;
         }
-        
+
         .spotify-content::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
         }
-        
+
         .loading {
             text-align: center;
             padding: 20px;
@@ -502,18 +540,21 @@
             right: 40px;
             transition: all 0.3s ease;
             transform-style: preserve-3d;
-            transform: translateZ(20px); /* Make link float */
+            transform: translateZ(20px);
+            /* Make link float */
         }
 
         .new-section:hover .discover-link {
-            transform: translateZ(40px) translateX(-5px); /* Link floats more on hover */
+            transform: translateZ(40px) translateX(-5px);
+            /* Link floats more on hover */
         }
 
         /* Right Panel Styles */
         .event-header {
             text-align: right;
             margin-bottom: 40px;
-            transform: translateZ(20px); /* Make title float */
+            transform: translateZ(20px);
+            /* Make title float */
         }
 
         .event-header p {
@@ -531,7 +572,8 @@
 
         .date-display {
             text-align: left;
-            transform: translateZ(30px); /* Make date display float */
+            transform: translateZ(30px);
+            /* Make date display float */
         }
 
         .day {
@@ -558,7 +600,8 @@
 
         .event-details {
             margin-top: 20px;
-            transform: translateZ(25px); /* Make event details float */
+            transform: translateZ(25px);
+            /* Make event details float */
         }
 
         .event-details p {
@@ -581,26 +624,26 @@
             display: inline-block;
             padding-right: 15px;
         }
-        
+
         .event-details p:first-child::before {
             content: '';
             position: absolute;
             left: -15px;
             top: 58%;
             transform: translateY(-50%);
-            width:5px;
+            width: 5px;
             height: 80%;
             background: linear-gradient(to bottom, #c2b19b, #9c7c5a);
             border-radius: 3px;
             opacity: 0.7;
             transition: all 0.3s ease;
         }
-        
+
         .event-details p:first-child:hover {
             color: #9c7c5a;
             transform: translateZ(15px);
         }
-        
+
         .event-details p:first-child:hover::before {
             height: 100%;
             opacity: 1;
@@ -619,7 +662,8 @@
         }
 
         .right-panel:hover .orange-circle {
-            transform: translateZ(-50px) translateX(-15px) scale(1.1); /* Circle moves back on hover, creating depth */
+            transform: translateZ(-50px) translateX(-15px) scale(1.1);
+            /* Circle moves back on hover, creating depth */
         }
 
         .bottom-content {
@@ -628,7 +672,8 @@
             justify-content: space-between;
             align-items: flex-end;
             transform-style: preserve-3d;
-            transform: translateZ(25px); /* Make bottom content float */
+            transform: translateZ(25px);
+            /* Make bottom content float */
         }
 
         .join-btn {
@@ -647,8 +692,9 @@
 
         .join-btn:hover {
             background: #4a4a4a;
-            transform: translateZ(15px) translateY(-5px); /* Button floats on hover */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateZ(15px) translateY(-5px);
+            /* Button floats on hover */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .join-btn .arrow {
@@ -673,7 +719,8 @@
         }
 
         .right-panel:hover .brand-logo {
-            transform: translateZ(20px) translateY(-5px); /* Brand logo floats on hover */
+            transform: translateZ(20px) translateY(-5px);
+            /* Brand logo floats on hover */
         }
 
         .brand-logo .star {
@@ -703,19 +750,19 @@
             .panel {
                 padding: 30px;
             }
-            
+
             .day {
                 font-size: 5rem;
             }
-            
+
             .date {
                 font-size: 6rem;
             }
-            
+
             .new-title h2 {
                 font-size: 2rem;
             }
-            
+
             .orange-circle {
                 width: 150px;
                 height: 150px;
@@ -729,37 +776,38 @@
                 border-radius: 30px;
                 min-height: auto;
                 padding: 25px;
-                flex: 1 1 100%; /* Take up 100% width on medium screens */
+                flex: 1 1 100%;
+                /* Take up 100% width on medium screens */
             }
-            
+
             .right-panel {
                 min-height: 400px;
             }
-            
+
             /* Black card container needs to respond too */
             .black-card-container {
                 width: 100%;
             }
-            
+
             .new-section {
                 height: 150px;
                 padding: 20px 25px;
                 border-radius: 30px;
             }
-            
+
             .login-title {
                 font-size: 2rem;
                 margin-bottom: 20px;
             }
-            
+
             .date {
                 font-size: 5rem;
             }
-            
+
             .day {
                 font-size: 4rem;
             }
-            
+
             .bottom-content {
                 margin-top: 20px;
             }
@@ -770,102 +818,103 @@
             .container {
                 padding: 0;
             }
-            
+
             .panel {
                 border-radius: 25px;
                 padding: 20px;
             }
-            
-            .left-panel, .right-panel {
+
+            .left-panel,
+            .right-panel {
                 min-height: auto;
             }
-            
+
             .header {
                 margin-bottom: 20px;
             }
-            
+
             .login-title {
                 font-size: 1.8rem;
                 margin-bottom: 15px;
             }
-            
+
             .facebook-btn {
                 padding: 10px 20px;
                 font-size: 0.9rem;
             }
-            
+
             .input-group input {
                 padding: 15px 15px 15px 60px;
                 font-size: 0.9rem;
             }
-            
+
             .input-group .icon-container {
                 width: 35px;
                 height: 35px;
             }
-            
+
             .forgot-link {
                 padding: 7px 15px;
                 font-size: 0.8rem;
             }
-            
+
             .warning-text {
                 font-size: 0.7rem;
                 margin: 15px 0;
             }
-            
+
             .submit-btn {
                 width: 40px;
                 height: 40px;
             }
-            
+
             .day {
                 font-size: 3.5rem;
             }
-            
+
             .date {
                 font-size: 4rem;
             }
-            
+
             .event-details p {
                 font-size: 0.9rem;
             }
-            
+
             .orange-circle {
                 width: 100px;
                 height: 100px;
                 right: -30px;
             }
-            
+
             .join-btn {
                 padding: 10px 15px;
                 min-width: 100px;
                 font-size: 0.9rem;
             }
-            
+
             .brand-logo .star {
                 font-size: 1.2rem;
             }
-            
+
             .new-section {
                 height: 120px;
                 border-radius: 25px;
             }
-            
+
             .new-title h2 {
                 font-size: 1.5rem;
             }
-            
+
             .new-title p {
                 font-size: 0.9rem;
             }
-            
+
             .discover-link {
                 font-size: 0.9rem;
                 right: 20px;
                 bottom: 15px;
             }
-            
+
             .notification {
                 padding: 10px 15px;
                 font-size: 0.9rem;
@@ -879,39 +928,39 @@
                 padding: 15px;
                 border-radius: 20px;
             }
-            
+
             .new-section {
                 height: 100px;
                 padding: 15px 20px;
                 border-radius: 20px;
             }
-            
+
             .day {
                 font-size: 3rem;
             }
-            
+
             .date {
                 font-size: 3.5rem;
             }
-            
+
             .login-title {
                 font-size: 1.5rem;
             }
-            
+
             .submit-container {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 15px;
             }
-            
+
             .submit-btn {
                 align-self: flex-end;
             }
-            
+
             .new-title h2 {
                 font-size: 1.3rem;
             }
-            
+
             .event-header p {
                 font-size: 0.9rem;
             }
@@ -919,25 +968,26 @@
 
         /* Touch device specific adjustments */
         @media (hover: none) {
+
             /* Disable or simplify 3D effects on touch devices */
             .panel:hover {
                 transform: none;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             }
-            
+
             /* Other touch device specific adjustments */
             .date:active {
                 color: #9c7c5a;
             }
-            
+
             .join-btn:active {
                 background: #4a4a4a;
             }
-            
+
             .new-section:active {
                 background: rgba(0, 0, 0, 0.8);
             }
-            
+
             /* Trigger light sweep effect on touch rather than hover */
             .new-section:active::before {
                 transform: rotate(45deg) translateY(100%);
@@ -949,41 +999,41 @@
             .container {
                 max-width: 1200px;
             }
-            
+
             .panel {
                 min-height: 600px;
             }
-            
+
             .day {
                 font-size: 7rem;
             }
-            
+
             .date {
                 font-size: 8rem;
             }
-            
+
             .login-title {
                 font-size: 3rem;
             }
-            
+
             .input-group input {
                 padding: 22px 22px 22px 80px;
                 font-size: 1.2rem;
             }
-            
+
             .input-group .icon-container {
                 width: 50px;
                 height: 50px;
             }
-            
+
             .new-section {
                 height: 200px;
             }
-            
+
             .new-title h2 {
                 font-size: 3rem;
             }
-            
+
             .new-title p {
                 font-size: 1.3rem;
             }
@@ -991,7 +1041,9 @@
 
         /* Safari fixes */
         @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-            .panel, .new-section {
+
+            .panel,
+            .new-section {
                 -webkit-backdrop-filter: blur(10px);
                 backdrop-filter: blur(10px);
             }
@@ -999,15 +1051,20 @@
 
         /* Fallback for browsers that don't support 3D transforms */
         @supports not (transform-style: preserve-3d) {
-            .panel:hover, .left-panel:hover, .right-panel:hover {
+
+            .panel:hover,
+            .left-panel:hover,
+            .right-panel:hover {
                 transform: scale(1.03);
             }
+
             .new-section:hover {
                 transform: scale(1.05);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- Top two main panels -->
@@ -1020,20 +1077,27 @@
                 <h2 class="login-title"><img src="https://avatars.githubusercontent.com/u/10573857">zeer</h2>
                 <div class="social-buttons">
                     <a href="https://x.com/zeerdeer" class="social-btn twitter-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1DA1F2">
-                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            fill="#1DA1F2">
+                            <path
+                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                            </path>
                         </svg>
                         <span>Twitter</span>
                     </a>
                     <a href="https://www.youtube.com/@zeer" class="social-btn youtube-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#FF0000">
-                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            fill="#FF0000">
+                            <path
+                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                         </svg>
                         <span>YouTube</span>
                     </a>
                     <a href="https://steamcommunity.com/id/ZEERDEER" class="social-btn steam-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1b2838">
-                            <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            fill="#1b2838">
+                            <path
+                                d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z" />
                         </svg>
                         <span>Steam</span>
                     </a>
@@ -1053,29 +1117,29 @@
 
             <div class="panel right-panel" id="rightPanel">
                 <div class="orange-circle"></div>
-                
+
                 <div class="event-header">
                     <p style="color: #666; font-size: 1.4rem; font-weight: 400;">Time</p>
                 </div>
-                
+
                 <div class="event-content">
                     <div class="date-display">
                         <div class="day">Fri</div>
                         <div class="date" id="eventDate">22nd</div>
-                        
+
                         <div class="event-details">
                             <p>20:00 PM</p>
                             <p style="height: 35px; margin: 0;"></p>
                             <p>賞味期限內に私を愛してください</p>
                         </div>
                     </div>
-                    
+
                     <div class="bottom-content">
                         <a href="#" class="join-btn" id="joinBtn">
                             Continue
                             <span class="arrow">→</span>
                         </a>
-                        
+
                         <div class="brand-logo">
                             <span class="star">✷</span>
                             <p>Z.UNKO</p>
@@ -1091,7 +1155,8 @@
             <div class="new-section spotify-section" id="exploreSuites">
                 <div class="spotify-header">
                     <svg class="spotify-logo" viewBox="0 0 24 24" fill="#1DB954">
-                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        <path
+                            d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
                     </svg>
                     <div class="spotify-title">
                         <h2>My Top Tracks</h2>
@@ -1123,7 +1188,7 @@
         }
 
         // Load Spotify tracks when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadSpotifyTracks();
         });
 
@@ -1192,9 +1257,9 @@
         // Function to show notifications
         function showNotification(message) {
         }
-        
+
         // Login form submission
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             // 直接跳转到登录页面
             window.location.href = 'login.html';
@@ -1203,31 +1268,31 @@
         // The link now directly navigates to https://x.com/ZEERDEER
         // Add mouse movement listener, implement 3D tilt effect, only enable on non-touch devices and wide screens
         if (!isTouchDevice() && window.innerWidth > 768) {
-            document.addEventListener('mousemove', function(e) {
+            document.addEventListener('mousemove', function (e) {
                 const panels = [leftPanel, rightPanel, exploreSuites];
-                
+
                 panels.forEach(panel => {
                     if (!panel) return;
-                    
+
                     // 获取元素边界
                     const rect = panel.getBoundingClientRect();
-                    
+
                     // 计算鼠标在元素内的相对位置
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    
+
                     // 判断鼠标是否在元素内
                     const isInElement = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
-                    
+
                     if (isInElement) {
                         // 将相对位置转换为[-1, 1]范围
                         const xPercent = (x / rect.width) * 2 - 1;
                         const yPercent = (y / rect.height) * 2 - 1;
-                        
+
                         // 计算倾斜角度
                         const rotateX = yPercent * -5;
                         const rotateY = xPercent * 5;
-                        
+
                         // 应用变换
                         panel.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
                     } else {
@@ -1238,4 +1303,6 @@
             });
         }
     </script>
-</body></html>
+</body>
+
+</html>

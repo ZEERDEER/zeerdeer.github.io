@@ -403,6 +403,12 @@
                 // 获取容器的位置和尺寸
                 const rect = container.getBoundingClientRect();
 
+                const isInside =
+                    e.clientX >= rect.left &&
+                    e.clientX <= rect.right &&
+                    e.clientY >= rect.top &&
+                    e.clientY <= rect.bottom;
+
                 // 应用倾斜效果
                 if (isInside) {
                     const centerX = rect.left + rect.width / 2;

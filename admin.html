@@ -354,122 +354,88 @@
     </div>
 
     <script>
-        // 退出登录
+        // 游戏数据
+        let games = [];
+
+        // 导航与登出组件
+        const homeBtn = document.getElementById('homeBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const gameForm = document.getElementById('gameForm');
+        const gameIdInput = document.getElementById('gameId');
+        const steamIdInput = document.getElementById('steamId');
+        const messageDiv = document.getElementById('message');
+        const gameList = document.getElementById('gameList');
+
+        // 登出与跳转逻辑
         function logout() {
-            sessionStorage.clear(); // 清除所有会话数据
-            // 如果有 localStorage 相关数据也可以选择性清除，但建议保留最近游玩的缓存以供主页使用
-            window.location.href = 'index.html';
+            sessionStorage.clear();
+            window.location.replace('index.html');
+        }
+
+        function goHome() {
+            window.location.assign('index.html');
         }
 
         // 检查登录状态
         function checkLogin() {
             const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
             const authToken = sessionStorage.getItem('authToken');
-
             if (!isLoggedIn || !authToken) {
-                window.location.href = 'login.html';
-                return;
+                window.location.replace('login.html');
+                return false;
             }
+            return true;
         }
 
-        // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', function () {
-            checkLogin();
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkLogin()) return;
 
-            // 添加导航按钮的事件监听器
-            document.getElementById('logoutBtn').addEventListener('click', function () {
+            // 基础事件监听
+            homeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                goHome();
+            });
+
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 logout();
             });
 
-            document.getElementById('homeBtn').addEventListener('click', function () {
-                window.location.href = 'index.html';
-            });
-
-            // 初始化游戏列表
+            // 初始数据抓取
             fetchGames();
-        });
 
-        // 3D倾斜效果 - 鼠标跟踪
-        document.addEventListener('DOMContentLoaded', function () {
+            // --- 3D 倾斜效果优化 ---
             const container = document.querySelector('.container');
-            let isMouseMoving = false;
-            let mouseTimer;
 
-            // 鼠标移动事件监听
-            document.addEventListener('mousemove', function (e) {
-                if (!container) return;
-
-                // 设置鼠标移动标志
-                isMouseMoving = true;
-                clearTimeout(mouseTimer);
-
-                // 获取容器的位置和尺寸
+            document.addEventListener('mousemove', (e) => {
                 const rect = container.getBoundingClientRect();
-
                 const isInside =
-                    e.clientX >= rect.left &&
-                    e.clientX <= rect.right &&
-                    e.clientY >= rect.top &&
-                    e.clientY <= rect.bottom;
+                    e.clientX >= rect.left && e.clientX <= rect.right &&
+                    e.clientY >= rect.top && e.clientY <= rect.bottom;
 
-                // 设置倾斜效果
+                // 检查是否在互动元素上（如果是，减弱倾斜以免遮挡点击）
+                const isOverBtn = e.target.closest('button, input, a');
+
                 if (isInside) {
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
-                    const mouseX = e.clientX - centerX;
-                    const mouseY = e.clientY - centerY;
+                    const rotateY = (e.clientX - centerX) / (rect.width / 2) * 5;
+                    const rotateX = (e.clientY - centerY) / (rect.height / 2) * -5;
 
-                    const rotateY = mouseX / (rect.width / 2) * 5;
-                    const rotateX = mouseY / (rect.height / 2) * -5;
-
-                    container.style.transition = 'transform 0.1s ease-out';
-                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+                    container.style.transition = isOverBtn ? 'transform 0.3s ease' : 'transform 0.1s ease-out';
+                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
                 } else {
-                    container.style.transition = 'transform 0.4s ease';
-                    container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                    container.style.transition = 'transform 0.5s ease';
+                    container.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
                 }
             });
-
-            // 鼠标离开页面时重置变换
-            document.addEventListener('mouseleave', function () {
-                if (!container) return;
-                container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-                isMouseMoving = false;
-            });
-
-            // 点击事件下移到最底层，确保不拦截按钮
         });
-
-        // 游戏数据
-        let games = [];
-
-        // DOM元素
-        const gameList = document.getElementById('gameList');
-        const gameForm = document.getElementById('gameForm');
-        const gameIdInput = document.getElementById('gameId');
-        const steamIdInput = document.getElementById('steamId');
-        const messageDiv = document.getElementById('message');
-        const saveBtn = document.getElementById('saveBtn');
-
-        // 显示消息
-        function showMessage(text, type) {
-            messageDiv.textContent = text;
-            messageDiv.className = `message message-${type}`;
-            messageDiv.style.display = 'block';
-
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
-        }
 
         // 获取游戏列表
         async function fetchGames() {
             const token = sessionStorage.getItem('authToken');
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
-
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     headers: { 'Authorization': token }
@@ -478,116 +444,83 @@
                 if (response.ok) {
                     games = await response.json();
                     renderGames();
-                    // 同步到localStorage以便主页显示
                     localStorage.setItem('recentGames', JSON.stringify(games));
                 } else {
                     showMessage('获取游戏列表失败', 'error');
                 }
             } catch (error) {
-                console.error('获取游戏列表错误:', error);
+                console.error('Fetch games error:', error);
                 showMessage('获取游戏列表时发生错误', 'error');
             }
         }
 
-        // 渲染游戏列表
+        // 渲染列表
         function renderGames() {
             gameList.innerHTML = '';
-
             games.forEach(game => {
-                const gameItem = document.createElement('div');
-                gameItem.className = 'game-item';
-                gameItem.innerHTML = `
+                const item = document.createElement('div');
+                item.className = 'game-item';
+                item.innerHTML = `
                     <img src="${game.icon}" alt="${game.name}" class="game-icon">
                     <div class="game-name">${game.name}</div>
                     <div class="game-actions">
-                        <button class="btn btn-edit" data-id="${game.id}">编辑</button>
-                        <button class="btn btn-delete" data-id="${game.id}">删除</button>
+                        <button class="btn btn-edit" onclick="editGame(${game.id})">编辑</button>
+                        <button class="btn btn-delete" onclick="deleteGame(${game.id})">删除</button>
                     </div>
                 `;
-                gameList.appendChild(gameItem);
-            });
-
-            // 添加编辑和删除事件监听器
-            document.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    editGame(id);
-                });
-            });
-
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    deleteGame(id);
-                });
+                gameList.appendChild(item);
             });
         }
 
-        // 编辑游戏
+        // 编辑
         function editGame(id) {
             const game = games.find(g => g.id === id);
             if (game) {
                 gameIdInput.value = game.id;
                 steamIdInput.value = game.steamId || '';
+                steamIdInput.focus();
             }
         }
 
-        // 删除游戏
+        // 删除
         async function deleteGame(id) {
-            if (confirm('确定要删除这个游戏吗？')) {
-                const token = sessionStorage.getItem('authToken');
-                if (!token) return;
+            if (!confirm('确定要删除这个游戏吗？')) return;
+            const token = sessionStorage.getItem('authToken');
+            try {
+                const response = await fetch('/.netlify/functions/games', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': token },
+                    body: JSON.stringify({ id })
+                });
 
-                try {
-                    const response = await fetch('/.netlify/functions/games', {
-                        method: 'DELETE',
-                        headers: { 'Authorization': token },
-                        body: JSON.stringify({ id })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        games = data.games;
-                        renderGames();
-                        // 同步到localStorage以便主页显示
-                        localStorage.setItem('recentGames', JSON.stringify(games));
-                        showMessage('游戏已删除', 'success');
-                    } else {
-                        showMessage('删除游戏失败', 'error');
-                    }
-                } catch (error) {
-                    console.error('删除游戏错误:', error);
-                    showMessage('删除游戏时发生错误', 'error');
+                if (response.ok) {
+                    const data = await response.json();
+                    games = data.games;
+                    renderGames();
+                    localStorage.setItem('recentGames', JSON.stringify(games));
+                    showMessage('游戏已删除', 'success');
                 }
+            } catch (error) {
+                showMessage('删除失败', 'error');
             }
         }
 
-        // 表单提交处理
-        gameForm.addEventListener('submit', async function (e) {
+        // 保存/新增
+        gameForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const token = sessionStorage.getItem('authToken');
-            if (!token) return;
-
             const id = gameIdInput.value ? parseInt(gameIdInput.value) : null;
             const steamId = steamIdInput.value.trim();
 
-            if (!steamId) {
-                showMessage('请输入 Steam AppID', 'error');
-                return;
-            }
+            if (!steamId) return showMessage('请输入 Steam AppID', 'error');
 
-            // 添加保存按钮的加载状态
             saveBtn.classList.add('loading');
             saveBtn.disabled = true;
 
             try {
                 const response = await fetch('/.netlify/functions/games', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': token,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': token, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id, steamId })
                 });
 
@@ -595,25 +528,27 @@
                     const data = await response.json();
                     games = data.games;
                     renderGames();
-                    // 同步到localStorage以便主页显示
                     localStorage.setItem('recentGames', JSON.stringify(games));
                     showMessage(id ? '游戏已更新' : '游戏已添加', 'success');
-
-                    // 重置表单
                     gameForm.reset();
                     gameIdInput.value = '';
                 } else {
-                    showMessage('保存游戏失败', 'error');
+                    showMessage('保存失败', 'error');
                 }
-            } catch (error) {
-                console.error('保存游戏错误:', error);
-                showMessage('保存游戏时发生错误', 'error');
+            } catch (e) {
+                showMessage('错误', 'error');
             } finally {
-                // 移除加载状态
                 saveBtn.classList.remove('loading');
                 saveBtn.disabled = false;
             }
         });
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message message-${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+        }
     </script>
 </body>
 

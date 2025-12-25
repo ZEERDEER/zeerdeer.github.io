@@ -6,6 +6,9 @@ const defaultGames = [];
 // 使用 Netlify Blobs 存储服务
 const { getStore } = require('@netlify/blobs');
 
+// 内存后备缓存 (当 Blobs 未启用时提供临时存储)
+let memoryGames = [];
+
 /**
  * 验证 Token 的合法性
  * 依赖环境变量: ADMIN_PASSWORD 或 API_SECRET
@@ -45,9 +48,9 @@ function isValidToken(token) {
 exports.handler = async function (event, context) {
   console.log(`DEBUG: [收到请求] Method: ${event.httpMethod}, Path: ${event.path}`);
 
-  let games = [];
+  let games = [...memoryGames];
   let store;
-  let storeStatus = "Initializing";
+  let storeStatus = "Initializing (Memory)";
 
   const headers = {
     'Content-Type': 'application/json',
@@ -69,6 +72,7 @@ exports.handler = async function (event, context) {
     const kvGames = await store.get('games_data', { type: 'json' });
     if (kvGames) {
       games = Array.isArray(kvGames) ? kvGames : [];
+      memoryGames = [...games]; // 同步到内存
       console.log(`DEBUG: [Blobs] 读取成功 - 数量: ${games.length}`);
       storeStatus = `Connected (${games.length} items)`;
     } else {
@@ -76,8 +80,8 @@ exports.handler = async function (event, context) {
       storeStatus = "Connected (Empty)";
     }
   } catch (error) {
-    console.error('DEBUG: [Blobs] 访问失败:', error.message);
-    storeStatus = `Error: ${error.message}`;
+    console.error('DEBUG: [Blobs] 访问失败 (使用内存后备):', error.message);
+    storeStatus = `Fallback: Memory (Blobs Error: ${error.message})`;
   }
 
   // 3. 处理 OPTIONS
@@ -166,6 +170,7 @@ exports.handler = async function (event, context) {
         console.log('DEBUG: [Blobs] 同步成功');
       }
 
+      memoryGames = [...games]; // 必须更新内存！
       return { statusCode: 200, headers, body: JSON.stringify({ success: true, games, storeStatus: "Saved" }) };
     } catch (error) {
       console.error('DEBUG: [POST] 内部错误:', error.message);
@@ -187,6 +192,7 @@ exports.handler = async function (event, context) {
           await store.setJSON('games_data', games);
           console.log('DEBUG: [DELETE] 云端数据同步成功');
         }
+        memoryGames = [...games]; // 必须更新内存！
       } else {
         console.warn(`DEBUG: [DELETE] 未找到 ID 为 ${id} 的项`);
       }

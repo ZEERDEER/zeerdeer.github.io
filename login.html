@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,7 @@
             -webkit-backdrop-filter: blur(10px);
             background-color: rgba(245, 243, 240, 0.8);
             padding: 40px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             transform-style: preserve-3d;
             transform: perspective(1000px) rotateX(0) rotateY(0);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -39,7 +40,7 @@
 
         .container:hover {
             transform: perspective(1000px) rotateX(2deg) rotateY(-5deg) scale(1.03);
-            box-shadow: 20px 20px 30px rgba(0,0,0,0.2);
+            box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.2);
         }
 
         .header {
@@ -105,7 +106,7 @@
         .btn-submit:hover {
             background: #4a4a4a;
             transform: translateZ(25px) translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .back-link {
@@ -151,6 +152,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -177,27 +179,27 @@
         const container = document.querySelector('.container');
 
         if (container) {
-            container.addEventListener('mousemove', function(e) {
+            container.addEventListener('mousemove', function (e) {
                 const rect = container.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                
+
                 // 判断鼠标是否在元素内
                 const isInElement = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
-                
+
                 if (isInElement) {
                     // 计算中心点
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    
+
                     // 计算鼠标相对中心点的位置
                     const mouseX = e.clientX - (rect.left + centerX);
                     const mouseY = e.clientY - (rect.top + centerY);
-                    
+
                     // 计算倾斜角度
                     const rotateY = mouseX / centerX * -5;
                     const rotateX = mouseY / centerY * 5;
-                    
+
                     // 应用变换
                     container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
                 } else {
@@ -206,7 +208,7 @@
                 }
             });
 
-            container.addEventListener('mouseleave', function() {
+            container.addEventListener('mouseleave', function () {
                 container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
             });
         }
@@ -215,25 +217,25 @@
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
-        loginForm.addEventListener('submit', async function(e) {
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
+
             try {
-                const response = await fetch('/.netlify/functions/auth', {
+                const response = await fetch('https://games-api.zeerunko.workers.dev/auth', {
                     method: 'POST',
                     body: JSON.stringify({ username, password })
                 });
-                
+
                 const data = await response.json();
                 if (data.success) {
                     sessionStorage.setItem('authToken', data.token);
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                window.location.href = 'admin.html';
-            } else {
-                errorMessage.textContent = '账号或密码错误！';
+                    sessionStorage.setItem('adminLoggedIn', 'true');
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMessage.textContent = '账号或密码错误！';
                     errorMessage.style.display = 'block';
                     setTimeout(() => {
                         errorMessage.style.display = 'none';
@@ -250,4 +252,5 @@
         });
     </script>
 </body>
-</html> 
+
+</html>

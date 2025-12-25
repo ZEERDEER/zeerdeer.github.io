@@ -1,3 +1,7 @@
 name = "games-api"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "GAMES_KV"
+id = "ce8e3374a00644cdbaac21e8f82bac68"

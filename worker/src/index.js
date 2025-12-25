@@ -14,6 +14,49 @@ export default {
 
         const url = new URL(request.url);
 
+        // --- Auth Route (Login) ---
+        if (url.pathname === "/auth" && request.method === "POST") {
+            try {
+                const { username, password } = await request.json();
+                // Username check (optional, defaults to true if env var not set)
+                const validUser = env.ADMIN_USERNAME ? username === env.ADMIN_USERNAME : true;
+                // Password check (must match API_SECRET)
+                const validPass = password === (env.API_SECRET || env.ADMIN_PASSWORD);
+
+                if (validUser && validPass) {
+                    const timestamp = Date.now().toString();
+                    const secret = env.API_SECRET || env.ADMIN_PASSWORD;
+                    const encoder = new TextEncoder();
+                    const key = await crypto.subtle.importKey(
+                        "raw",
+                        encoder.encode(secret),
+                        { name: "HMAC", hash: "SHA-256" },
+                        false,
+                        ["sign"]
+                    );
+                    const signatureBuffer = await crypto.subtle.sign(
+                        "HMAC",
+                        key,
+                        encoder.encode(timestamp)
+                    );
+                    const signature = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)));
+                    const token = `${timestamp}.${signature}`;
+
+                    return new Response(JSON.stringify({ success: true, token }), {
+                        status: 200,
+                        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                    });
+                } else {
+                    return new Response(JSON.stringify({ success: false, message: "Invalid credentials" }), {
+                        status: 401,
+                        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+                    });
+                }
+            } catch (e) {
+                return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+            }
+        }
+
         // --- 1. GET Request ---
         if (request.method === "GET") {
             let games = [];

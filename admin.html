@@ -35,8 +35,9 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             transform-style: preserve-3d;
             transform: perspective(1000px) rotateX(0) rotateY(0);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            will-change: transform;
+            transition: transform 0.1s ease-out, box-shadow 0.4s ease;
+            will-change: transform, box-shadow;
+            z-index: 1;
         }
 
         /* 移除hover效果，将由JavaScript控制 */
@@ -77,6 +78,9 @@
             transition: all 0.3s ease;
             border: none;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+            transform: translateZ(50px);
         }
 
         .icon-btn:hover {
@@ -154,6 +158,9 @@
             cursor: pointer;
             font-size: 0.9rem;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 100;
+            transform: translateZ(40px);
         }
 
         .btn-edit {
@@ -211,6 +218,9 @@
             background: rgba(255, 255, 255, 0.7);
             font-size: 1rem;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 100;
+            transform: translateZ(30px);
         }
 
         .form-control:focus {
@@ -236,6 +246,8 @@
             margin-top: 10px;
             position: relative;
             overflow: hidden;
+            z-index: 100;
+            transform: translateZ(50px);
         }
 
         .btn-submit:hover {
@@ -398,7 +410,7 @@
 
                 const isOverInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('input');
 
-                // 只有当鼠标在容器内且不在按钮上时才应用3D效果
+                // 只有当鼠标在容器内且完全不在按钮/输入框上时才应用3D效果
                 if (isInside && !isOverInteractive) {
                     // 计算鼠标相对于容器中心的位置（-1到1之间）
                     const centerX = rect.left + rect.width / 2;
@@ -406,15 +418,16 @@
                     const mouseX = e.clientX - centerX;
                     const mouseY = e.clientY - centerY;
 
-                    // 计算旋转角度（最大±3度，降低了角度）
+                    // 计算旋转角度（最大±3度）
                     const rotateY = mouseX / (rect.width / 2) * -3;
                     const rotateX = mouseY / (rect.height / 2) * 3;
 
                     // 应用变换
-                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                    container.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
                 } else {
-                    // 鼠标不在容器内或在按钮上，重置变换
-                    container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                    // 鼠标不在容器内，或正在操作按钮/输入框，立即重置旋转
+                    container.style.transition = 'transform 0.2s ease-out, box-shadow 0.4s ease';
+                    container.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
                 }
 
                 // 设置定时器，如果鼠标停止移动，重置变换

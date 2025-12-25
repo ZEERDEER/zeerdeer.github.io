@@ -3,8 +3,8 @@ async function loadRecentGames() {
     const recentPlayContainer = document.querySelector('.recent-play');
 
     try {
-        // 使用时间戳防止浏览器缓存
-        const response = await fetch(`/.netlify/functions/games?t=${Date.now()}`);
+        // 使用 Cloudflare Workers
+        const response = await fetch(`https://games-api.zeerunko.workers.dev?t=${Date.now()}`);
 
         if (response.ok) {
             const data = await response.json();
